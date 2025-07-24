@@ -1,0 +1,161 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:tracking_system_app/model/customers_list_model.dart';
+import 'package:tracking_system_app/model/my_info_model.dart';
+import 'package:tracking_system_app/network_util.dart';
+import 'package:tracking_system_app/widgets/home/custome_message_dialog.dart';
+import 'package:tracking_system_app/widgets/home/custome_sign_out_dialog.dart';
+import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
+
+class HomeController extends GetxController {
+  RxInt selectedCardIndex = (-1).obs;
+  final TextEditingController issueDialogController = TextEditingController();
+  RxBool isTextFildFilled = false.obs;
+  RxBool isLoading = false.obs;
+  RxBool isMyInfoLoading = false.obs;
+  RxBool showLottieAnimation = false.obs;
+  Rx<MyInfoDataModel> myInfoModel = MyInfoDataModel(
+          id: 0, name: "", phone: "", employeeNumber: "", image: null, role: "")
+      .obs;
+  //==============Zak's Editation=======================
+  RxBool isDocumentsIconPressed = false.obs;
+  RxBool isDropdownOpen = false.obs;
+  RxList<CustomerListDataModel> filteredCustomers =
+      <CustomerListDataModel>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    initialize();
+  }
+
+//===========================================My Info========================================
+  Future<void> initialize() async {
+    isMyInfoLoading.value = true;
+    try {
+      //zak uncomment this lines
+      // var response = await $.get('users/my-info');
+      // print(response);
+
+      // if (response != null) {
+      //   myInfoModel.value = MyInfoDataModel.fromJson(response["data"]);
+      // }
+      //zak delete this lines ======================
+      myInfoModel.value = MyInfoDataModel(id: 12,name: "zak", phone: '0969830277', employeeNumber: '', role: 'driver', image: null,);
+      //zak delete this lines ======================
+    } catch (e) {
+      print("Error: $e");
+      CustomToast.errorToast("Opps..", "Failed to load my info");
+    } finally {
+      isMyInfoLoading.value = false;
+    }
+  }
+//===========================================Messaging dialog================================================================
+
+  Future<void> sendToAdmin() async {
+    isLoading.value = true;
+    try {
+      // //zak uncomment this lines
+      // final response = await $.post('users/send-message', body: {
+      //   "type": "issue",
+      //   "message": issueDialogController.text,
+      // });
+
+      // if (response != null) {
+      //   // await Future.delayed(Duration(seconds: 3));
+      //   // // Show Lottie animation for 3 seconds
+      //   showLottieAnimation.value = true;
+      //   issueDialogController.clear();
+      //   isTextFildFilled.value = false;
+      //   isLoading.value = false;
+      //   await Future.delayed(const Duration(seconds: 3));
+      //   Get.back(); 
+      // }
+    } catch (e) {
+      CustomToast.errorToast("Error", "Error because : ${e.toString()}");
+    } finally {
+      showLottieAnimation.value = false;
+      isLoading.value = false;
+    }
+  }
+
+  void exitMessageDialog() {
+    Get.back(); 
+    isTextFildFilled.value = false;
+    issueDialogController.clear();
+  }
+
+  void showCustomMessageDialog(
+      BuildContext context, HomeController homeController) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        if (MediaQuery.of(context).orientation == Orientation.landscape) {
+          return SingleChildScrollView(
+              child: CustomMessageDialog(
+            title: homeController.myInfoModel.value.name,
+            subtitle: homeController.myInfoModel.value.employeeNumber ??
+                homeController.myInfoModel.value.id.toString(),
+          ));
+        } else {
+          return CustomMessageDialog(
+            title: homeController.myInfoModel.value.name,
+            subtitle: homeController.myInfoModel.value.employeeNumber ??
+                homeController.myInfoModel.value.id.toString(),
+          );
+        }
+      },
+    );
+  }
+//===========================================Sign out dialog================================================================
+
+  void exitSignOutDialog() {
+    Get.back(); 
+  }
+
+  void showCustomSignOutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomSignOutDialog();
+      },
+    );
+  }
+
+  Future<void> logout() async {
+    isLoading.value = true;
+    try {
+      
+      await $.resetUser();
+
+      isLoading.value = false;
+    } catch (e) {
+      CustomToast.errorToast("Error", "Error because : ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
+  void toggleDropdown() {
+    isDropdownOpen.value = !isDropdownOpen.value;
+  }
+
+
+  RxBool isCustomersLoading = false.obs;
+  RxList<CustomerListDataModel> customersList = <CustomerListDataModel>[].obs;
+  Future initializeCustomersTypes() async {
+    isCustomersLoading.value = true;
+//zak uncomment this lines
+    // var data = await $
+    //     .get('customers/list?state=active&driver_id=${myInfoModel.value.id}');
+    // if (data != null) {
+    //   customersList.value = (data['data'] as List)
+    //       .map((e) => CustomerListDataModel.fromJson(e))
+    //       .toList();
+    // }
+    isCustomersLoading.value = false;
+    // isDocumentsTypesInitialized.value = true;
+  }
+
+}
