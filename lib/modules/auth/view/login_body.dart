@@ -107,9 +107,7 @@ class LoginBodyBody extends StatelessWidget {
           ),
         ),
         SizedBox(
-            height: isLandscape
-                ? screenHeight * 0.05
-                : screenWidth * 0.15),
+            height: isLandscape ? screenHeight * 0.05 : screenWidth * 0.15),
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.only(bottom: 30.0, top: 30),
@@ -128,45 +126,6 @@ class LoginBodyBody extends StatelessWidget {
             ),
           ),
         ),
-        // CustomeLoginTextFormField(
-        //   hintText: 'Phone Number',
-        //   inputType: TextInputType.number,
-        //   title: 'Phone Number',
-        //   prefixIcon: Padding(
-        //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        //     child: Row(
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: [
-        //         Image.asset(
-        //           'assets/images/uae_flag.png',
-        //           width: 24,
-        //           height: 24,
-        //         ),
-        //         const SizedBox(width: 5),
-        //         Container(
-        //           padding: const EdgeInsets.symmetric(horizontal: 5),
-        //           decoration: const BoxDecoration(
-        //               border: Border(
-        //             right: BorderSide(
-        //               color: AppVar.seconndTextColor,
-        //               width: 1.0,
-        //             ),
-        //           )),
-        //           child: const Text(
-        //             '+971',
-        //             style: TextStyle(
-        //               fontSize: 14,
-        //               color: AppVar.seconndTextColor,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        //   controller: controller.phoneNumberController,
-        //   validator: null,
-        // ),
 
         Theme(
           data: Theme.of(context).copyWith(
@@ -184,15 +143,12 @@ class LoginBodyBody extends StatelessWidget {
               hintText: 'Phone Number',
               hintStyle: TextStyle(
                   color: const Color.fromARGB(197, 255, 255, 255),
-                  fontSize:
-                      textFieldFontSize * 0.9),
+                  fontSize: textFieldFontSize * 0.9),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                    color: AppVar.secondarySoft, width: 2.0),
+                borderSide: BorderSide(color: AppVar.secondarySoft, width: 2.0),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                    color: AppVar.secondary, width: 2.0), 
+                borderSide: BorderSide(color: AppVar.secondary, width: 2.0),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppSizeR.s10),
@@ -211,10 +167,9 @@ class LoginBodyBody extends StatelessWidget {
                 vertical: AppSizeH.s15,
               ),
             ),
-
-            initialCountryCode: 'AE', 
+            initialCountryCode: 'AE',
             onChanged: (phone) {
-              print(phone.completeNumber); 
+              print(phone.completeNumber);
             },
           ),
         ),
@@ -243,57 +198,140 @@ class LoginBodyBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 15),
-        Center(
-          child: LoginDefultButton(
-            fontsize: AppVar.mainFontSize,
-            buttonColor: const Color(0xff1CB26B),
-            borderColor: Colors.transparent,
-            textColor: AppVar.seconndTextColor,
-            title: "SIGN IN",
-            onPressed: () {
-              if (controller.formKey.currentState!.validate()) {
-                controller.validateForm();
-              }
-            },
-          ),
-        ),
-        // const SizedBox(height: 15),
-        // Padding(
-        //   padding: const EdgeInsets.only(bottom: 30.0),
-        //   child: Center(
-        //     child: Row(
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: [
-        //         Text(
-        //           "Don't have an account? ",
-        //           style: TextStyle(
-        //             color: AppVar.seconndTextColor,
-        //             fontSize: AppVar.littelFontSize,
-        //           ),
-        //         ),
-        //         GestureDetector(
-        //           onTap: () {
-        //             Get.toNamed(Routes.REGISTER);
-        //           },
-        //           child: DecoratedBox(
-        //             decoration: const BoxDecoration(
-        //               border: Border(
-        //                   bottom: BorderSide(color: Colors.white, width: 1.0)),
-        //             ),
-        //             child: Text(
-        //               "Sign up",
-        //               style: TextStyle(
-        //                 fontWeight: FontWeight.bold,
-        //                 fontSize: AppVar.littelFontSize,
-        //                 color: const Color(0xff1CB26B),
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ), 
-        // ),
+        Obx(() {
+          return Center(
+            child: LoginDefultButton(
+              fontsize: AppVar.mainFontSize,
+              buttonColor: controller.isButtonLooked.value ||
+                      controller.isButtonLookedPermently.value
+                  ? AppVar.primarySoft
+                  : const Color(0xff1CB26B),
+              borderColor: Colors.transparent,
+              textColor: controller.isButtonLookedPermently.value
+                  ? Colors.black.withValues(alpha: .2)
+                  : AppVar.seconndTextColor,
+              title: controller.isButtonLooked.value
+                  ? "Try again in ${controller.lockoutTimer.value}s"
+                  : "SIGN IN",
+              onPressed: controller.isButtonLooked.value ||
+                      controller.isButtonLookedPermently.value
+                  ? () {}
+                  : () {
+                      if (controller.formKey.currentState!.validate()) {
+                        controller.validateForm();
+                      }
+                    },
+            ),
+          );
+        }),
+        //------------ zak ----------------------
+        Obx(() {
+          if (controller.isBiometricAvailable.value) {
+            return Column(
+              children: [
+                const SizedBox(height: 20),
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.grey,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black,
+                                  offset: Offset(0, .4),
+                                  blurRadius: 1)
+                            ]),
+                        width: AppSizeW.s100,
+                        height: AppSizeH.s1,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: AppSizeW.s5),
+                        child: Text(
+                          'OR',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: AppSizeSp.s9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: AppSizeW.s100,
+                        height: AppSizeH.s1,
+                        decoration: const BoxDecoration(
+                            color: Colors.grey,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black,
+                                  offset: Offset(0, .4),
+                                  blurRadius: 1)
+                            ]),
+                      ),
+                    ],
+                  ),
+                ),
+                // SizedBox(height: AppSizeH.s20),
+                Obx(() {
+                  return Opacity(
+                    opacity: controller.fingerprintOpacity.value,
+                    child: GestureDetector(
+                      onTap: controller.authenticateWithBiometrics,
+                      child: Center(
+                        child: Container(
+                          padding: EdgeInsets.only(top: AppSizeW.s10),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppVar.primary,
+                              width: AppSizeW.s2,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.fingerprint,
+                            size: AppSizeW.s40,
+                            color: AppVar.seconndTextColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                // SizedBox(height: AppSizeH.s10),
+                Center(
+                  child: Opacity(
+                    opacity: controller.fingerprintOpacity.value,
+                    child: Text(
+                      'Use Fingerprint',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: AppSizeSp.s12,
+                      ),
+                    ),
+                  ),
+                ),
+                if (controller.isFirstLogin.value) ...[
+                  SizedBox(height: AppSizeH.s10),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: AppSizeW.s40),
+                    child: Text(
+                      'Available after first manual login',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: AppSizeSp.s10,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        }),
       ],
     );
   }

@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tracking_system_app/controller/life_cycle_controller.dart';
+import 'package:tracking_system_app/controller/theme_controller.dart';
 import 'package:tracking_system_app/network_util.dart';
 import 'package:tracking_system_app/routes/app_pages.dart';
 import 'package:tracking_system_app/shared/shared.dart';
 import 'package:tracking_system_app/style/app_var.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,8 @@ void main() async {
     $.token1 = sharedLoginToken;
     $.role = _pref.getString('role');
   }
+  
+  Get.put(ThemeController());
   runApp(const MyApp());
 }
 

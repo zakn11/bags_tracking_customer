@@ -13,8 +13,7 @@ class SplashController extends GetxController
     super.onInit();
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(
-          milliseconds: 2000), 
+      duration: const Duration(milliseconds: 2000),
     );
 
     scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
@@ -36,6 +35,8 @@ class SplashController extends GetxController
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Get.offNamed(Routes.LOGIN);
+        
+        // Get.offNamed(Routes.HOME);
       }
     });
   }

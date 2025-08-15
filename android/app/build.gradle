@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.tracking_system_app"
     //last
-    compileSdk = 34
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -49,4 +49,6 @@ flutter {
 dependencies {
     // Other dependencies
     implementation 'com.google.mlkit:barcode-scanning:17.2.0'
+    // zak
+    implementation "androidx.fragment:fragment:1.3.6"
 }

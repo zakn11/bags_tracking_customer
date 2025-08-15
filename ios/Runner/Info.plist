@@ -61,5 +61,8 @@
 	<!-- Internet Access (Optional) 2 last zak-->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location for network monitoring</string>
+
+	<key>NSFaceIDUsageDescription</key>
+	<string>App wants to save your password and reach it from face id</string>
 </dict>
 </plist>
