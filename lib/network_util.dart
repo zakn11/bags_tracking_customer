@@ -1,4 +1,4 @@
-import 'dart:async';
+  import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response, MultipartFile, FormData;
@@ -13,7 +13,9 @@ import 'package:tracking_system_app/utils/util.dart';
 import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
 
 class $ {
-  static String? token1;
+  // static String? token1;
+  //zak delete this
+  static String? token1="6|8a4WOG96rLJyyTUh2VRUiwSDYVp5XzArA6m4iHXE55a4f520";
   static String? role;
   static String? phoneNumber1;
   static String? password1;
@@ -241,6 +243,7 @@ class $ {
   static dynamic responseHandler(Response<dynamic> response) {
     final int? statusCode = response.statusCode;
     print(statusCode);
+    print(response.statusMessage);
     Alert.hideProgress();
 
     if (statusCode == 400) {

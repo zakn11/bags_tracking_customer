@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tracking_system_app/model/customers_list_model.dart';
-import 'package:tracking_system_app/model/my_info_model.dart';
+import 'package:tracking_system_app/model/get_all_meals_model.dart';
 import 'package:tracking_system_app/network_util.dart';
 import 'package:tracking_system_app/widgets/home/custome_message_dialog.dart';
 import 'package:tracking_system_app/widgets/home/custome_sign_out_dialog.dart';
@@ -12,16 +11,14 @@ class HomeController extends GetxController {
   final TextEditingController issueDialogController = TextEditingController();
   RxBool isTextFildFilled = false.obs;
   RxBool isLoading = false.obs;
+  RxBool isConfirmitionLoading = false.obs;
   RxBool isMyInfoLoading = false.obs;
   RxBool showLottieAnimation = false.obs;
-  Rx<MyInfoDataModel> myInfoModel = MyInfoDataModel(
-          id: 0, name: "", phone: "", employeeNumber: "", image: null, role: "")
-      .obs;
+  RxBool showLottieAnimationForConfirmation = false.obs;
+  Rx<GetAllMealsModel> getAllMealsModel  = GetAllMealsModel(meals: []).obs;
+  RxList<int> selectedMealIds = <int>[].obs;
+
   //==============Zak's Editation=======================
-  RxBool isDocumentsIconPressed = false.obs;
-  RxBool isDropdownOpen = false.obs;
-  RxList<CustomerListDataModel> filteredCustomers =
-      <CustomerListDataModel>[].obs;
 
   @override
   void onInit() {
@@ -29,25 +26,69 @@ class HomeController extends GetxController {
     initialize();
   }
 
-//===========================================My Info========================================
-  Future<void> initialize() async {
-    isMyInfoLoading.value = true;
+//===========================================Meals========================================
+ void toggleMealSelection(int mealId) {
+    if (selectedMealIds.contains(mealId)) {
+      // إذا كانت مختارة → نشيلها
+      selectedMealIds.remove(mealId);
+    } else {
+      // إذا مش مختارة → نضيفها بس لو أقل من 2
+      if (selectedMealIds.length >= 2) {
+        CustomToast.errorToast("Oops", "You can only select 2 meals");
+      } else {
+        selectedMealIds.add(mealId);
+      }
+    }
+  }
+  //send order to backend
+    Future<void> confirmSelectedMeals() async {
+    if (selectedMealIds.length != 2) {
+      CustomToast.errorToast("Validation", "Please select exactly 2 meals");
+      return;
+    }
+  print(selectedMealIds[0]);
+  print(selectedMealIds[1]);
     try {
-      //zak uncomment this lines
-      // var response = await $.get('users/my-info');
-      // print(response);
+      isConfirmitionLoading.value = true;
+      final response = await $.post(
+        "order/addOrder",
+        body: {
+          "meal1_id": selectedMealIds[0], 
+          "meal2_id": selectedMealIds[1], 
+        },
+      );
+      if(response !=null){
+        showLottieAnimationForConfirmation.value = true;
+      selectedMealIds.value = [];
+                await Future.delayed(const Duration(seconds: 3));
+      }
+      print(response);
+      CustomToast.successToast("Success", "Meals confirmed successfully");
+    } catch (e) {
+      CustomToast.errorToast("Error", "Error: ${e.toString()}");
+    } finally {
+                      showLottieAnimationForConfirmation.value = false;
 
-      // if (response != null) {
-      //   myInfoModel.value = MyInfoDataModel.fromJson(response["data"]);
-      // }
-      //zak delete this lines ======================
-      myInfoModel.value = MyInfoDataModel(id: 12,name: "zak", phone: '0969830277', employeeNumber: '', role: 'driver', image: null,);
-      //zak delete this lines ======================
+      isConfirmitionLoading.value = false;
+    }
+  }
+
+
+   Future<void> initialize() async {
+    isLoading.value = true;
+    try {
+      var response = await $.get('meal/getAllMeal/1');
+      print(response);
+
+      if (response != null) {
+        getAllMealsModel.value = GetAllMealsModel.fromJson(response["data"]);
+      }
+
     } catch (e) {
       print("Error: $e");
       CustomToast.errorToast("Opps..", "Failed to load my info");
     } finally {
-      isMyInfoLoading.value = false;
+      isLoading.value = false;
     }
   }
 //===========================================Messaging dialog================================================================
@@ -56,21 +97,20 @@ class HomeController extends GetxController {
     isLoading.value = true;
     try {
       // //zak uncomment this lines
-      // final response = await $.post('users/send-message', body: {
-      //   "type": "issue",
-      //   "message": issueDialogController.text,
-      // });
+      final response = await $.post('/message/sendMessage', body: {
+        "data": issueDialogController.text,
+      });
 
-      // if (response != null) {
-      //   // await Future.delayed(Duration(seconds: 3));
-      //   // // Show Lottie animation for 3 seconds
-      //   showLottieAnimation.value = true;
-      //   issueDialogController.clear();
-      //   isTextFildFilled.value = false;
-      //   isLoading.value = false;
-      //   await Future.delayed(const Duration(seconds: 3));
-      //   Get.back(); 
-      // }
+      if (response != null) {
+        // await Future.delayed(Duration(seconds: 3));
+        // // Show Lottie animation for 3 seconds
+        showLottieAnimation.value = true;
+        issueDialogController.clear();
+        isTextFildFilled.value = false;
+        isLoading.value = false;
+        await Future.delayed(const Duration(seconds: 3));
+        Get.back(); 
+      }
     } catch (e) {
       CustomToast.errorToast("Error", "Error because : ${e.toString()}");
     } finally {
@@ -93,15 +133,13 @@ class HomeController extends GetxController {
         if (MediaQuery.of(context).orientation == Orientation.landscape) {
           return SingleChildScrollView(
               child: CustomMessageDialog(
-            title: homeController.myInfoModel.value.name,
-            subtitle: homeController.myInfoModel.value.employeeNumber ??
-                homeController.myInfoModel.value.id.toString(),
+            title: "Welcome",
+            subtitle: "How can we assest you today?"
           ));
         } else {
           return CustomMessageDialog(
-            title: homeController.myInfoModel.value.name,
-            subtitle: homeController.myInfoModel.value.employeeNumber ??
-                homeController.myInfoModel.value.id.toString(),
+            title: "Welcome",
+            subtitle: "How can we assest you today?"
           );
         }
       },
@@ -137,25 +175,5 @@ class HomeController extends GetxController {
   }
 
 
-  void toggleDropdown() {
-    isDropdownOpen.value = !isDropdownOpen.value;
-  }
-
-
-  RxBool isCustomersLoading = false.obs;
-  RxList<CustomerListDataModel> customersList = <CustomerListDataModel>[].obs;
-  Future initializeCustomersTypes() async {
-    isCustomersLoading.value = true;
-//zak uncomment this lines
-    // var data = await $
-    //     .get('customers/list?state=active&driver_id=${myInfoModel.value.id}');
-    // if (data != null) {
-    //   customersList.value = (data['data'] as List)
-    //       .map((e) => CustomerListDataModel.fromJson(e))
-    //       .toList();
-    // }
-    isCustomersLoading.value = false;
-    // isDocumentsTypesInitialized.value = true;
-  }
 
 }
