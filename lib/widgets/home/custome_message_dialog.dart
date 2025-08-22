@@ -33,14 +33,6 @@ class CustomMessageDialog extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "${homeController.myInfoModel.value.role.capitalize} name: ",
-                      style:  TextStyle(
-                        color: Colors.grey,
-                        fontSize: AppSizeSp.s14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
                       title,
                       style:  TextStyle(
                         color: Colors.grey,
@@ -52,14 +44,7 @@ class CustomMessageDialog extends StatelessWidget {
                 SizedBox(height: AppSizeH.s5), 
                 Row(
                   children: [
-                    Text(
-                      "${homeController.myInfoModel.value.role.capitalize} ID: ",
-                      style:  TextStyle(
-                        color: Colors.grey,
-                        fontSize: AppSizeSp.s14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+               
                     Text(
                       subtitle,
                       style:  TextStyle(
