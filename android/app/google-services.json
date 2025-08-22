@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "279602694762",
+    "project_id": "fluttercourse-fa604",
+    "storage_bucket": "fluttercourse-fa604.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279602694762:android:7d13dc847299465a3f1813",
+        "android_client_info": {
+          "package_name": "com.example.tracking_system_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDg12rMHidHeDci-zHkbppNFqSfim9xAmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

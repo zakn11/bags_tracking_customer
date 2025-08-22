@@ -44,7 +44,7 @@ bool get isTablet {
       builder: (context, child) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Traking System',
+          title: 'Be Healthy.C',
           theme: AppVar.lightTheme,
           darkTheme: AppVar.darkTheme,
           themeMode: ThemeMode.system,
@@ -52,6 +52,12 @@ bool get isTablet {
               ? Routes.HOME
               : Routes.SPLASH_SCREEN, 
           getPages: AppPages.routes,
+          builder: (context, widget) {
+            //NOTE FROM ZAK:  this makes sure ScreenUtil is available everywhere
+            ScreenUtil.init(context);
+            return widget!;
+          },
+          home: child,
         );
       }
     );
