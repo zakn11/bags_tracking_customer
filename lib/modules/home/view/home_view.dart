@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tracking_system_app/controller/theme_controller.dart';
@@ -86,7 +87,44 @@ class _HomeViewState extends State<HomeView> {
     meals[index].isSelected = true;
     setState(() {});
   }
+  //Zak delete the initstate
+@override
+  void initState() {
+    super.initState();
+    
+    // طلب صلاحية الإشعارات (iOS)
+    FirebaseMessaging.instance.requestPermission();
 
+    // الحصول على الـ token
+    FirebaseMessaging.instance.getToken().then((token) {
+      print("FCM Token: $token");
+    });
+
+    // استقبال الإشعار عندما يكون التطبيق مفتوح
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Message received: ${message.notification?.title}");
+
+      // عرض Pop-up
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text(message.notification?.title ?? "No Title"),
+          content: Text(message.notification?.body ?? "No Body"),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.pop(context),
+            )
+          ],
+        ),
+      );
+    });
+
+    // عند فتح التطبيق من الإشعار
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("App opened from notification: ${message.data}");
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find();

@@ -256,45 +256,45 @@ You can use fingerprint on your next login.''',
       Get.offAllNamed(Routes.HOME);
       //zak uncoment this
 
-      final cachedCredentials = await $.getpasswordAndPhoneCachedCredentials();
-      //this condition for:
-      //اذا الاكاش مو فاضي والفيلدين مالهم فاليديت واليوزر مستمعل بصمة فببعتهم من الكاش
+      // final cachedCredentials = await $.getpasswordAndPhoneCachedCredentials();
+      // //this condition for:
+      // //اذا الاكاش مو فاضي والفيلدين مالهم فاليديت واليوزر مستمعل بصمة فببعتهم من الكاش
 
-      final bool usingCachedCredentials =
-          cachedCredentials != null && !validateForm();
+      // final bool usingCachedCredentials =
+      //     cachedCredentials != null && !validateForm();
 
-      final response = await $.post(
-        '/users/login',
-        body: usingCachedCredentials
-            ? cachedCredentials
-            : {
-                'phone': phoneNumberController.text,
-                'password': passwordController.text,
-              },
-      );
-      if (response != null) {
-        //TO PREVENT THE ADMIN TO SIGN IN TO APP
-        if (response['data']['role'] == "admin") {
-          Get.offAllNamed(Routes.LOGIN);
-          Alert.infoDialog(message: tr('Admins do not have permissions to sign this app in.'));
-        } else {
-          // اذا اول مرة بفوت على التطبيق فما اعرضلو زر البصمة، يعني بكل تسجيل دخول بسيف بالكاش
-          await $.setConnectionParams(
-            //هون عم حط الكاش احيانا مرة تانية بقلب الكاش لان مشان خلي القيمة نفسها بكل تسجيلة دخول من البصمة
-            password: usingCachedCredentials
-                ? cachedCredentials["phone"]!
-                : passwordController.text,
-            phoneNumber: usingCachedCredentials
-                ? cachedCredentials["password"]!
-                : phoneNumberController.text,
-            token: response['data']['token'],
-            userRole: response['data']['role'],
-          );
-          // Navigate to Home page on successful login
-          Get.offAllNamed(Routes.HOME);
-          Alert.toast('Logged in successfully');
-        }
-      }
+      // final response = await $.post(
+      //   '/users/login',
+      //   body: usingCachedCredentials
+      //       ? cachedCredentials
+      //       : {
+      //           'phone': phoneNumberController.text,
+      //           'password': passwordController.text,
+      //         },
+      // );
+      // if (response != null) {
+      //   //TO PREVENT THE ADMIN TO SIGN IN TO APP
+      //   if (response['data']['role'] == "admin") {
+      //     Get.offAllNamed(Routes.LOGIN);
+      //     Alert.infoDialog(message: tr('Admins do not have permissions to sign this app in.'));
+      //   } else {
+      //     // اذا اول مرة بفوت على التطبيق فما اعرضلو زر البصمة، يعني بكل تسجيل دخول بسيف بالكاش
+      //     await $.setConnectionParams(
+      //       //هون عم حط الكاش احيانا مرة تانية بقلب الكاش لان مشان خلي القيمة نفسها بكل تسجيلة دخول من البصمة
+      //       password: usingCachedCredentials
+      //           ? cachedCredentials["phone"]!
+      //           : passwordController.text,
+      //       phoneNumber: usingCachedCredentials
+      //           ? cachedCredentials["password"]!
+      //           : phoneNumberController.text,
+      //       token: response['data']['token'],
+      //       userRole: response['data']['role'],
+      //     );
+      //     // Navigate to Home page on successful login
+      //     Get.offAllNamed(Routes.HOME);
+      //     Alert.toast('Logged in successfully');
+      //   }
+      // }
       isLoading.value = false;
     } catch (e) {
       // If decryption fails, clear the corrupted credentials

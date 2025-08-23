@@ -48,6 +48,8 @@ dependencies:
   pinput: ^5.0.1
   flutter_dotenv: ^5.2.1
   encrypt: ^5.0.3
+  firebase_core: ^4.0.0
+  firebase_messaging: ^16.0.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.0
@@ -57,16 +59,17 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/icon.png"
-  adaptive_icon_background: "#196839"
-  adaptive_icon_foreground: "assets/images/icon.png"
+  image_path: "assets/images/Logo1.png"
+  adaptive_icon_background: "#A3A3A3"
+  # adaptive_icon_background: "#196839"
+  adaptive_icon_foreground: "assets/images/Logo1.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
 flutter:
 
   # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
+  # included with your application, so that you can use the icons in  
   # the material Icons class.
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
