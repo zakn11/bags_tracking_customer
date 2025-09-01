@@ -2,11 +2,11 @@ import 'package:get/get.dart';
 import 'package:tracking_system_app/modules/auth/binding/forget_password_binding.dart';
 import 'package:tracking_system_app/modules/auth/binding/login_binding.dart';
 import 'package:tracking_system_app/modules/auth/binding/register_binding.dart';
-import 'package:tracking_system_app/modules/auth/view/forget_password_view.dart';
 import 'package:tracking_system_app/modules/auth/view/login_view.dart';
+import 'package:tracking_system_app/modules/auth/view/otp/forget_password_page.dart';
 import 'package:tracking_system_app/modules/auth/view/regester_view.dart';
 import 'package:tracking_system_app/modules/home/binding/home_binding.dart';
-import 'package:tracking_system_app/modules/home/view/home_view.dart';
+import 'package:tracking_system_app/modules/home/view/meal_details_view.dart';
 import 'package:tracking_system_app/modules/main_navigation/views/main_navigation.dart';
 import 'package:tracking_system_app/modules/splash/splash_screen.dart';
 
@@ -39,10 +39,16 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.FORGOT_PASSWORD,
-      page: () => const ForgetPasswordView(),
+      page: () =>  ForgetPasswordPage(),
       binding: ForgetPasswordBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(name: _Paths.SPLASH_SCREEN, page: () => const SplashScreen()),
+    //     GetPage(
+    //   name: _Paths.MEAL_DETAILS,
+    //   page: () => const MealDetailsView(),
+    //   transition: Transition.rightToLeft,
+    // ),
+
   ];
 }

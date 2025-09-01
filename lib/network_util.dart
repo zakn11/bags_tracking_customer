@@ -13,6 +13,8 @@ import 'package:tracking_system_app/utils/util.dart';
 import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
 
 class $ {
+  // static String? token1;
+  //zak delete this
   static String? token1;
   static String? role;
   static String? phoneNumber1;
@@ -20,8 +22,8 @@ class $ {
   // static const int _RESPONSE_STATUS_AUTHORIZATION_ERROR = 401;
   //change th the endpoint ZAK============================
 
-  static String _URL = "http://127.0.0.1:8000/api";
-  static String BASE_URL = "http://127.0.0.1:8000";
+  static String _URL = "http://10.0.2.2:8000/api";
+  static String BASE_URL = "http://10.0.2.2:8000";
 
   // static Future<dynamic> getQrScan(String url,
   //     {bool redirectIfAuthFail = true}) async {
@@ -241,6 +243,7 @@ class $ {
   static dynamic responseHandler(Response<dynamic> response) {
     final int? statusCode = response.statusCode;
     print(statusCode);
+    print(response.statusMessage);
     Alert.hideProgress();
 
     if (statusCode == 400) {
@@ -254,11 +257,14 @@ class $ {
       Alert.infoDialog(
           message: "${body['message']}. Check your phone number or password");
     } else if (statusCode == 401 && (token1 != "" || token1 != null)) {
+      if (Get.isDialogOpen!) {
+        Get.back(); // Close any open dialog before opening a new one
+      }
       print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz: $token1");
       dynamic body = response.data;
       Alert.infoDialog(message: "${body['message']}.");
 //TO LOG OUT IF I HAVE THIS MESSAGE DURING USE THE APP like when the seession has been expierd
-      if (body['message'] == "Unauthenticated.") {
+      if (body['message'] == "Unauthorized") {
         // resetUser();
         expiredSessionFun();
       }
@@ -291,6 +297,14 @@ class $ {
     } else if (statusCode == 411) {
       alertAndExit(tr('Your account is not yet linked or not activiated!'));
       //ZAKARIA EDITION
+    } else if (statusCode == 429) {
+      dynamic body = response.data;
+      if (body['message'] != null && body['message'].isNotEmpty) {
+        // Case when the response has a 'message' field
+        Alert.infoDialog(message: "${body['message']}");
+      } else {
+        Alert.toast("Error connecting server! try again later.");
+      }
     } else if (statusCode == 422) {
       if (Get.isDialogOpen!) {
         Get.back(); // Close any open dialog before opening a new one
@@ -322,12 +336,11 @@ class $ {
   }
 
   static resetUser({bool redirect = true}) async {
-    //zak uncomment this lines
-    // dynamic response = await post('users/logout');
-    // //IF THERE IS NO INTERNET
-    // if (response == null) {
-    //   return;
-    // }
+    dynamic response = await post('logout');
+    //IF THERE IS NO INTERNET
+    if (response == null) {
+      return;
+    }
     SharedPreferences.getInstance().then((_pref) {
       _pref.remove('token');
       _pref.remove('role');
@@ -345,8 +358,8 @@ class $ {
 
     return null;
   }
+
   static resetUserAfterEncrypt({bool redirect = true}) async {
-    
     SharedPreferences.getInstance().then((_pref) {
       _pref.remove('token');
       _pref.remove('role');
@@ -356,8 +369,8 @@ class $ {
     });
     token1 = "";
     role = "";
-    password1  = "";
-    phoneNumber1  = "";
+    password1 = "";
+    phoneNumber1 = "";
     if (redirect) {
       // Get.delete<HomeController>();
       // Get.offAllNamed(Routes.LOGIN);
@@ -369,40 +382,63 @@ class $ {
     return null;
   }
 
-  static Future setConnectionParams(
-      {required String token, required String userRole,required String phoneNumber,required String password}) async {
-    _URL = "http://127.0.0.1:8000/api";
-    BASE_URL = "http://127.0.0.1:8000";
+  static Future setConnectionParams({
+    required String token,
+    required String userRole,
+    required String phoneNumber,
+    required String password,
+  }) async {
+    try {
+      token1 = token;
+      role = userRole;
+      password1 = password;
+      phoneNumber1 = phoneNumber;
 
-    token1 = token;
-    role = userRole;
-    password1 = password;
-    phoneNumber1 = phoneNumber;
+      final _pref = await SharedPreferences.getInstance();
+      _pref.setString('token', token1!);
+      _pref.setString('role', role!);
 
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    _pref.setString('token', token1!);
-    _pref.setString('role', role!);
-    final encryptedPassword = EncryptionUtils.encryptString(password1!);
-    _pref.setString('password', encryptedPassword);
-    _pref.setString('phoneNumber', phoneNumber1!);
-    return;
+      log(">> about to encrypt password");
+      final encryptedPassword = EncryptionUtils.encryptString(password1!);
+      log(">> password encrypted OK");
+
+      _pref.setString('password', encryptedPassword);
+      _pref.setString('phoneNumber', phoneNumber1!);
+    } catch (e, s) {
+      log("setConnectionParams ERROR: $e");
+      log("$s");
+      rethrow;
+    }
   }
+
 //zak
-static Future<Map<String, String>?> getpasswordAndPhoneCachedCredentials() async {
-  SharedPreferences _pref = await SharedPreferences.getInstance();
-  final phone = _pref.getString('phoneNumber');
-  final encryptedPassword = _pref.getString('password');
-  
-  if (phone != null && encryptedPassword != null) {
-    // Decrypt the password when retrieving
-    final decryptedPassword = EncryptionUtils.decryptString(encryptedPassword);
-    return {
-      'phone': phone,
-      'password': decryptedPassword,
-    };
+  static Future<Map<String, String>?>
+      getpasswordAndPhoneCachedCredentials() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    final phone = _pref.getString('phoneNumber');
+    final encryptedPassword = _pref.getString('password');
+
+    if (phone != null &&
+        encryptedPassword != null &&
+        encryptedPassword.isNotEmpty) {
+      try {
+        final decryptedPassword =
+            EncryptionUtils.decryptString(encryptedPassword);
+        return {
+          'phone': phone,
+          'password': decryptedPassword,
+        };
+      } catch (e) {
+        print("Decryption failed: $e");
+        // إذا فشل فك التشفير، نظف الكاش لتجنب إعادة الخطأ
+        await _pref.remove('password');
+        await _pref.remove('phoneNumber');
+        return null;
+      }
+    }
+    return null;
   }
-  return null;
-}
+
 //zak
 
   // static Future<bool> loadConnectionParams() async {

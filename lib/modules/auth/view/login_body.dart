@@ -135,7 +135,7 @@ class LoginBodyBody extends StatelessWidget {
                 ),
           ),
           child: IntlPhoneField(
-            controller: controller.phoneNumberController,
+            // controller: controller.phoneNumberController,
             decoration: InputDecoration(
               isDense: true,
               fillColor: Colors.transparent,
@@ -169,7 +169,13 @@ class LoginBodyBody extends StatelessWidget {
             ),
             initialCountryCode: 'AE',
             onChanged: (phone) {
+              controller.phoneNumberController.text = phone.completeNumber;
               print(phone.completeNumber);
+            },
+            onSubmitted: (phone) {
+              // هون بيتخزن الرقم كامل مع رمز الدولة مرة وحدة بس لما يضغط Enter أو Done
+              // controller.phoneNumberController.text = phone.completeNumber;
+              print("final: ${controller.phoneNumberController.text}");
             },
           ),
         ),

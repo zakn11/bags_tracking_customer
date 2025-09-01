@@ -15,7 +15,6 @@ import 'package:tracking_system_app/widgets/auth/login-defult_button.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
 import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
 
-
 class LoginController extends GetxController {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -63,9 +62,15 @@ class LoginController extends GetxController {
 
 //-------------------------------------------------------------------
   Future<void> checkFirstLogin() async {
-    final cachedCredentials = await $.getpasswordAndPhoneCachedCredentials();
-    isFirstLogin.value = cachedCredentials == null;
-    fingerprintOpacity.value = isFirstLogin.value ? 0.5 : 1.0;
+    try {
+      final cachedCredentials = await $.getpasswordAndPhoneCachedCredentials();
+      isFirstLogin.value = cachedCredentials == null;
+      fingerprintOpacity.value = isFirstLogin.value ? 0.5 : 1.0;
+    } catch (e) {
+      print("Error in checkFirstLogin: $e");
+      isFirstLogin.value = true;
+      fingerprintOpacity.value = 0.5;
+    }
   }
 
 //-------------------------------------------------------------------
@@ -238,6 +243,21 @@ You can use fingerprint on your next login.''',
     return true;
   }
 
+  String normalizePhoneNumber(String phone) {
+    // مثال: +9630969830277
+    final regex = RegExp(r'^\+(\d+?)0(\d+)$');
+    final match = regex.firstMatch(phone);
+
+    if (match != null) {
+      // رمز الدولة
+      final countryCode = match.group(1)!; // 963
+      // الرقم بدون الصفر
+      final restNumber = match.group(2)!; // 969830277
+      return '+$countryCode$restNumber';
+    }
+    return phone; // اذا ما كان فيه صفر بعد الكود رجعه متل ما هو
+  }
+
 //---------------------------------------------------------------------------
   Future<void> login() async {
     if (Get.isDialogOpen!) {
@@ -253,58 +273,77 @@ You can use fingerprint on your next login.''',
 
     isLoading.value = true;
     try {
-      Get.offAllNamed(Routes.HOME);
-      //zak uncoment this
+      final cachedCredentials = await $.getpasswordAndPhoneCachedCredentials();
+      //this condition for:
+      //اذا الاكاش مو فاضي والفيلدين مالهم فاليديت واليوزر مستمعل بصمة فببعتهم من الكاش
 
-      // final cachedCredentials = await $.getpasswordAndPhoneCachedCredentials();
-      // //this condition for:
-      // //اذا الاكاش مو فاضي والفيلدين مالهم فاليديت واليوزر مستمعل بصمة فببعتهم من الكاش
+      final bool usingCachedCredentials =
+          cachedCredentials != null && !validateForm();
+      log("zak1 ${phoneNumberController.text} zak1");
+      final formattedPhone = normalizePhoneNumber(phoneNumberController.text);
 
-      // final bool usingCachedCredentials =
-      //     cachedCredentials != null && !validateForm();
+      log("zak $formattedPhone zak");
+      final response = await $.post(
+        '/loginUser',
+        body: usingCachedCredentials
+            ? cachedCredentials
+            : {
+                'phone': formattedPhone,
+                'password': passwordController.text,
+              },
+      );
+      log("zak1");
+      if (response != null) {
+        log("zak2");
+        //TO PREVENT THE ADMIN TO SIGN IN TO APP
+        //TO PREVENT THE ADMIN TO SIGN IN TO APP
+        if (response['data']['role'] == "admin" ||
+            response['data']['role'] == "super_admin" ||
+            response['data']['role'] == "admin_cook" ||
+            response['data']['role'] == "driver" ||
+            response['data']['role'] == "store_employee") {
+          Get.offAllNamed(Routes.LOGIN);
+          Alert.infoDialog(
+              message: tr('You do not have permissions to sign this app in.'));
+        } else {
+          // اذا اول مرة بفوت على التطبيق فما اعرضلو زر البصمة، يعني بكل تسجيل دخول بس
+          //يف بالكاش
+          log("zak7");
+          log("TOKEN => ${response['data']['token']}");
+          log("ROLE => ${response['data']['role']}");
+          log("PHONE => ${usingCachedCredentials ? cachedCredentials["phone"] : formattedPhone}");
+          log("PASS => ${usingCachedCredentials ? cachedCredentials["password"] : passwordController.text}");
 
-      // final response = await $.post(
-      //   '/users/login',
-      //   body: usingCachedCredentials
-      //       ? cachedCredentials
-      //       : {
-      //           'phone': phoneNumberController.text,
-      //           'password': passwordController.text,
-      //         },
-      // );
-      // if (response != null) {
-      //   //TO PREVENT THE ADMIN TO SIGN IN TO APP
-      //   if (response['data']['role'] == "admin") {
-      //     Get.offAllNamed(Routes.LOGIN);
-      //     Alert.infoDialog(message: tr('Admins do not have permissions to sign this app in.'));
-      //   } else {
-      //     // اذا اول مرة بفوت على التطبيق فما اعرضلو زر البصمة، يعني بكل تسجيل دخول بسيف بالكاش
-      //     await $.setConnectionParams(
-      //       //هون عم حط الكاش احيانا مرة تانية بقلب الكاش لان مشان خلي القيمة نفسها بكل تسجيلة دخول من البصمة
-      //       password: usingCachedCredentials
-      //           ? cachedCredentials["phone"]!
-      //           : passwordController.text,
-      //       phoneNumber: usingCachedCredentials
-      //           ? cachedCredentials["password"]!
-      //           : phoneNumberController.text,
-      //       token: response['data']['token'],
-      //       userRole: response['data']['role'],
-      //     );
-      //     // Navigate to Home page on successful login
-      //     Get.offAllNamed(Routes.HOME);
-      //     Alert.toast('Logged in successfully');
-      //   }
-      // }
-      isLoading.value = false;
+          await $.setConnectionParams(
+            //هون عم حط الكاش احيانا مرة تانية بقلب الكاش لان مشان خلي القيمة نفسها بكل تسجيلة دخول من البصمة
+            password: usingCachedCredentials
+                ? cachedCredentials["password"]!
+                : passwordController.text,
+            phoneNumber: usingCachedCredentials
+                ? cachedCredentials["phone"]!
+                : formattedPhone,
+            token: response['data']['token'],
+            userRole: response['data']['role'],
+          );
+          // Navigate to Home page on successful login
+          Get.offAllNamed(Routes.HOME);
+          Alert.toast('Logged in successfully');
+        }
+      }
     } catch (e) {
+      log("zak2");
       // If decryption fails, clear the corrupted credentials
-    if (e is ArgumentError || e.toString().contains('decryption')) {
-      await $.resetUserAfterEncrypt();
-      Alert.infoDialog(message: 'Session expired. Please login again.');
-      return;
-    }
+      if (e is ArgumentError || e.toString().contains('decryption')) {
+        await $.resetUserAfterEncrypt();
+        Alert.infoDialog(message: 'Session expired. Please login again.');
+        return;
+      }
       CustomToast.errorToast("Error", "Error because : ${e.toString()}");
-    } finally {}
+      log("zak error ${e.toString()}");
+    } finally {
+      log("zak3");
+      isLoading.value = false;
+    }
   }
 
   @override

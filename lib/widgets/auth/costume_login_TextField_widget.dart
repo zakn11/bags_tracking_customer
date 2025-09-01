@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 
-
 class CustomeLoginTextFormField extends StatefulWidget {
   const CustomeLoginTextFormField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.inputType,
     required this.title,
@@ -14,7 +13,7 @@ class CustomeLoginTextFormField extends StatefulWidget {
     this.prefixIcon,
     this.isFilledTextFild,
     this.filledTextFildData,
-  }) : super(key: key);
+  });
 
   final String hintText;
   final String title;
@@ -63,10 +62,10 @@ class _CustomeLoginTextFormFieldState extends State<CustomeLoginTextFormField> {
       keyboardType: widget.inputType,
       obscureText:
           widget.title == "Password" && !_isPasswordVisible ? true : false,
-      cursorColor: AppVar.secondary, 
+      cursorColor: AppVar.secondary,
       style: TextStyle(
-        color: AppVar.seconndTextColor, 
-        fontSize: textFieldFontSize, 
+        // color: AppVar.seconndTextColor,
+        fontSize: textFieldFontSize,
       ),
       decoration: InputDecoration(
         isDense: true,
@@ -90,14 +89,12 @@ class _CustomeLoginTextFormFieldState extends State<CustomeLoginTextFormField> {
         hintText: widget.hintText,
         hintStyle: TextStyle(
             color: const Color.fromARGB(197, 255, 255, 255),
-            fontSize: textFieldFontSize * 0.9), 
+            fontSize: textFieldFontSize * 0.9),
         enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-              color: AppVar.secondarySoft, width: 2.0), 
+          borderSide: BorderSide(color: AppVar.secondarySoft, width: 2.0),
         ),
         focusedBorder: UnderlineInputBorder(
-          borderSide:
-              BorderSide(color: AppVar.secondary, width: 2.0), 
+          borderSide: BorderSide(color: AppVar.secondary, width: 2.0),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizeR.s10),
@@ -112,7 +109,7 @@ class _CustomeLoginTextFormFieldState extends State<CustomeLoginTextFormField> {
           fontWeight: FontWeight.bold,
         ),
         contentPadding: EdgeInsets.symmetric(
-          vertical: contentPaddingVertical, 
+          vertical: contentPaddingVertical,
           horizontal: AppSizeW.s8,
         ),
       ),

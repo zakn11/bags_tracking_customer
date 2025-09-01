@@ -13,94 +13,70 @@ class CustomMessageDialog extends StatelessWidget {
   CustomMessageDialog({super.key, required this.title, required this.subtitle});
 
   final HomeController homeController = Get.put(HomeController());
+
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    Color backgroundColor = isDark ? Colors.grey[900]! : Colors.white;
+
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizeR.s20), 
+        borderRadius: BorderRadius.circular(AppSizeR.s20),
       ),
-      backgroundColor: Colors.white, 
+      backgroundColor: backgroundColor, // <- dynamic background
       child: Padding(
-        padding: EdgeInsets.all(AppSizeW.s20), 
+        padding: EdgeInsets.all(AppSizeW.s20),
         child: Stack(
           children: [
             Column(
-              mainAxisSize: MainAxisSize
-                  .min, 
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 Row(
                   children: [
-                    Text(
-                      "${homeController.myInfoModel.value.role.capitalize} name: ",
-                      style:  TextStyle(
-                        color: Colors.grey,
-                        fontSize: AppSizeSp.s14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                     Text(
                       title,
-                      style:  TextStyle(
-                        color: Colors.grey,
+                      style: TextStyle(
+                        color: isDark ? Colors.white70 : Colors.grey,
                         fontSize: AppSizeSp.s14,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: AppSizeH.s5), 
+                SizedBox(height: AppSizeH.s5),
                 Row(
                   children: [
                     Text(
-                      "${homeController.myInfoModel.value.role.capitalize} ID: ",
-                      style:  TextStyle(
-                        color: Colors.grey,
-                        fontSize: AppSizeSp.s14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
                       subtitle,
-                      style:  TextStyle(
-                        color: Colors.grey,
+                      style: TextStyle(
+                        color: isDark ? Colors.white70 : Colors.grey,
                         fontSize: AppSizeSp.s14,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(
-                    height: AppSizeH.s40), 
-
-                
+                SizedBox(height: AppSizeH.s40),
                 TextFormField(
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: AppSizeSp.s14,
-                    color: AppVar.textColor,
+                    color: isDark ? AppVar.seconndTextColor : AppVar.textColor,
                   ),
                   onChanged: (value) {
-                    if (value != "") {
-                      homeController.isTextFildFilled.value = true;
-                    } else {
-                      homeController.isTextFildFilled.value = false;
-                    }
+                    homeController.isTextFildFilled.value = value.isNotEmpty;
                   },
                   controller: homeController.issueDialogController,
-                  maxLines: 9, 
+                  maxLines: 9,
                   decoration: InputDecoration(
                     hintText: 'Enter Your Problem',
-                    hintStyle:  TextStyle(
+                    hintStyle: TextStyle(
                       color: const Color(0xffBFBFBF),
                       fontSize: AppSizeSp.s12,
                     ),
-                    
-
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSizeR.s10),
                       borderSide:
                           const BorderSide(color: AppVar.textColor, width: 2.0),
                     ),
-                    
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSizeR.s10),
                       borderSide:
@@ -112,94 +88,80 @@ class CustomMessageDialog extends StatelessWidget {
                           const BorderSide(color: Colors.redAccent, width: 2.0),
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppSizeR.s10,
+                      borderRadius: BorderRadius.circular(AppSizeR.s10),
+                      borderSide: BorderSide(
+                        color: isDark ? Colors.white54 : Colors.grey,
+                        width: 1.0,
                       ),
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 125, 125, 125),
-                          width: 1.0), 
                     ),
                   ),
                 ),
-                SizedBox(
-                    height: AppSizeH.s20), 
+                SizedBox(height: AppSizeH.s20),
                 Padding(
                   padding: EdgeInsets.only(bottom: AppSizeH.s10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    
                     children: [
                       Text(
                         DateFormat('EEE, MMM d, y')
                             .format(DateTime.now())
                             .toString(),
-                        style:
-                            TextStyle(fontSize: AppSizeSp.s11, color: Colors.grey),
+                        style: TextStyle(
+                          fontSize: AppSizeSp.s11,
+                          color: isDark ? Colors.white54 : Colors.grey,
+                        ),
                       ),
                       const Spacer(),
-                      Obx(
-                        () => homeController.isLoading.value
-                            ? const SizedBox(child: MainLoadingWidget())
-                            :
-                            
-                            Obx(() {
-                                if (homeController.showLottieAnimation.value) {
-                                  return Center(
-                                    child: SizedBox(
-                                      width: AppSizeW.s50,
-                                      height: AppSizeH.s50,
-                                      child: Lottie.asset(
-                                        repeat: false,
-                                        fit: BoxFit.fill,
-                                        'assets/Lottie/Animation - 1726871315481.json', 
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return GestureDetector(
-                                    onTap: !homeController
-                                                .isTextFildFilled.value ||
-                                            homeController.isLoading.value
-                                        ? null 
-                                        : () {
-                                            homeController.sendToAdmin();
-                                          },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: AppSizeH.s5, horizontal: AppSizeW.s10),
-                                      decoration: BoxDecoration(
-                                        color: homeController.isLoading.value
-                                            ? Colors.transparent
-                                            : homeController
-                                                    .isTextFildFilled.value
-                                                ? const Color(0xff3AD189)
-                                                : Colors.transparent,
-                                        border: !homeController
-                                                .isTextFildFilled.value
-                                            ? Border.all(color: AppVar.primary)
-                                            : null,
-                                        borderRadius: BorderRadius.circular(AppSizeR.s10),
-                                      ),
-                                      child: Text(
-                                        "Send to admin",
-                                        style: TextStyle(
-                                          color: !homeController
-                                                  .isTextFildFilled.value
-                                              ? AppVar.primary
-                                              : AppVar.seconndTextColor,
-                                          fontSize: AppSizeSp.s14,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }),
-                      ),
+                      Obx(() {
+                        if (homeController.isLoading.value) {
+                          return const MainLoadingWidget();
+                        } else if (homeController.showLottieAnimation.value) {
+                          return SizedBox(
+                            width: AppSizeW.s50,
+                            height: AppSizeH.s50,
+                            child: Lottie.asset(
+                              'assets/Lottie/Animation - 1726871315481.json',
+                              repeat: false,
+                              fit: BoxFit.fill,
+                            ),
+                          );
+                        } else {
+                          return GestureDetector(
+                            onTap: !homeController.isTextFildFilled.value
+                                ? null
+                                : () {
+                                    homeController.sendToAdmin();
+                                  },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: AppSizeH.s5,
+                                  horizontal: AppSizeW.s10),
+                              decoration: BoxDecoration(
+                                color: homeController.isTextFildFilled.value
+                                    ? const Color(0xff3AD189)
+                                    : Colors.transparent,
+                                border: !homeController.isTextFildFilled.value
+                                    ? Border.all(color: AppVar.primary)
+                                    : null,
+                                borderRadius:
+                                    BorderRadius.circular(AppSizeR.s10),
+                              ),
+                              child: Text(
+                                "Send to admin",
+                                style: TextStyle(
+                                  color: homeController.isTextFildFilled.value
+                                      ? AppVar.seconndTextColor
+                                      : AppVar.primary,
+                                  fontSize: AppSizeSp.s14,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      }),
                     ],
                   ),
                 ),
-                
               ],
             ),
             Positioned(
@@ -207,15 +169,13 @@ class CustomMessageDialog extends StatelessWidget {
               top: AppSizeH.s75,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: AppSizeW.s5),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
-                child:  Text(
+                color: backgroundColor, // match the dialog background
+                child: Text(
                   "Your Problem",
                   style: TextStyle(
                     fontSize: AppSizeSp.s12,
                     fontWeight: FontWeight.bold,
-                    color: AppVar.textColor,
+                    color: isDark ? AppVar.seconndTextColor : AppVar.textColor,
                   ),
                 ),
               ),
@@ -224,19 +184,21 @@ class CustomMessageDialog extends StatelessWidget {
               right: 0,
               top: 0,
               child: GestureDetector(
-                onTap: () {
-                  homeController.exitMessageDialog();
-                },
+                onTap: homeController.exitMessageDialog,
                 child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(
-                            width: 1, color: const Color(0xffEDEDED)),
-                        borderRadius: BorderRadius.circular(AppSizeR.s5)),
-                    child: const Icon(
-                      Icons.close_rounded,
-                      color: AppVar.textColor,
-                    )),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                        width: 1,
+                        color:
+                            isDark ? Colors.white54 : const Color(0xffEDEDED)),
+                    borderRadius: BorderRadius.circular(AppSizeR.s5),
+                  ),
+                  child: Icon(
+                    Icons.close_rounded,
+                    color: isDark ? AppVar.seconndTextColor : AppVar.textColor,
+                  ),
+                ),
               ),
             ),
           ],

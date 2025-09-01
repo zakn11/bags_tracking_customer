@@ -1,16 +1,16 @@
-import 'dart:ui';
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tracking_system_app/controller/theme_controller.dart';
+import 'package:tracking_system_app/model/get_all_meals_model.dart';
 import 'package:tracking_system_app/modules/home/controller/home_controller.dart';
-import 'package:tracking_system_app/network_util.dart';
+import 'package:tracking_system_app/modules/home/view/meal_details_view.dart';
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
+import 'package:tracking_system_app/widgets/general/costume_TextField_widget.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
-import 'package:tracking_system_app/widgets/home/home_view_documents_icon_widget.dart';
-import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -22,81 +22,19 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final HomeController homeController = Get.put(HomeController());
 
-  final List<Meal> meals = [
-    Meal(
-      name: 'Mediterranean Quinoa Bowl',
-      description:
-          'Quinoa, feta, olives, tomatoes, cucumber, lemon vinaigrette',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuDjG4N9T_wvScqdSowpubDgjzGe5_o2pKTuLYsc8Bc34vWyu3REzgyGIh6Mh47FJrr4D6r3cC4ud-3YL3P_eEUgSjcQPl8v8CiPA597Q0qy9eOUHPPisyPJqHX0Xozuk4Kb9uwC3d8MPQSgRECHFc-BPSf3MFsuLY6N2fUDxd-piX0wp8DYrhK5v-_4o0Jt1gzJMW1a7zT8Az16dU5OiGLDCP_adpuHhhP17MVZ-MAkOOezZNXqmvE92yqeqwm5DpnytDqmZo3FdMoJ',
-      isSelected: false,
-    ),
-    Meal(
-      name: 'Grilled Salmon with Asparagus',
-      description: 'Salmon fillet, grilled asparagus, lemon herb sauce',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuBPC1YIwZubQ1E1D-yLHTRgahm3VgdcOIQ-GPlqsXz74izy55PY1WoqlJXjLGnJn4aoWwAI7bnb5_4vPJuAlLPnQwSOrHtazS_QGvK5VV1RMYFDMBbpHlZrd4p3RBvkOkYsS7wQY7M3IuWsr016CgQWrLG28k-7VuHjQ-FDfrVjqn9IJqaA1n6LXHYqG-IXXQROURqoTwpLQ2oqq7RxdUpEFUnXGVzQNe9yU8rPp-oiJ_t52pk8eWgyWlJbHJTOapcK9mvSPq8RsUjI',
-      isSelected: false,
-    ),
-    Meal(
-      name: 'Chicken Stir-Fry with Brown Rice',
-      description:
-          'Chicken breast, mixed vegetables, brown rice, soy ginger sauce',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCtHciWWFFtBQ0lpLX757Se86XUUYgD9axc7_IbG0YxVyW9QnCKCRPVEP3Y3zSSU_9XsoBLq4KOWvq0gRwZWywAHsH8Pxh2Gq12FfVcy9VHdZiqL5-xvlLdK-sRGCqUvBghD4qSAT6OfiswuBMg7VLB_tPFlES8RfMnPqgfc0JnDcuImbe0kqVh9wkHnlI6yLtQxlwe62jGaeTzY0bORo7cX8d8CJMHF90VjL-z5dtCZCU5xMH3CIUVtzI9QxOG7tDSMt4A1WKwav5k',
-      isSelected: false,
-    ),
-    Meal(
-      name: 'Vegan Lentil Soup',
-      description: 'Lentils, carrots, celery, onions, vegetable broth, herbs',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCvtu6_c7O-DX8r1QVCCVP3mmM5ZeTwjuRNpPteB5bGW-G04tpw58tnC-saZXXwSXCKXO2plhWv5jMUiSMt45h0yvW3yVZhZ_fUjKWsBSxmL57ne1OWdv8D9_4ZnWZxn6RFqHw4Ym9MjW7lroR3p1UL43m1JSB0EWTb4mqtn3F6aMqvp0jL3jq2cMWs9MgRRLRdshTc6uZ6XRM7RZ-CK1zbHdcX336iVkDr_zetHtoKIlsccIqY_O8rjSIeFMZtHGerqRxvWvABXVvV',
-      isSelected: false,
-    ),
-    Meal(
-      name: 'Turkey Meatballs with Zucchini Noodles',
-      description:
-          'Turkey meatballs, zucchini noodles, marinara sauce, parmesan',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuBW-8HhW5BT2uBoG08OwqSZFZAFNyCfv29EwdZSzAfBy7oHCMiE42i_Q4cSBX2xZZPv8YfzncjzEiZ5gY4qQso8pzJ0HoPYhvtKb4L7Nqo-Nf13qEWEgv1855zURn6deUGUvfT2SWeukXt6aST5Md83AylKI5YTltsARifR10PtoQzAZS7QEuCm2pvNqpfbWCmffUB1JXgM1FsIKCNNpJudPyvyIA9LQMu6vHvtNc6HXZvWucCehva2A11jRoraVMDBZGlMcyiO2NFU',
-      isSelected: false,
-    ),
-    Meal(
-      name: 'Shrimp Tacos with Avocado Salsa',
-      description: 'Shrimp, corn tortillas, avocado salsa, lime',
-      imageUrl:
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuDvHtQoGKjk7K0dvTVD8uiiqyiH7jUqXZqIyVLAppZt5n3Jm9fjmrMm23kNELa4X8hosk8QgS_a-M6XRjDVpeZsulfNvPZerthOEoCjTecudgmYLmywjgJYfKdKJA7EBPw2J26UH1MijNVHfsdAdMjAdVTb2VjwCB0CNqaaUHcO8h8320_81ZbjRHVNvkAOF6K7KWUtoOOovcEL7jJsu3A9XiXvA7JASbzg3qZHpsP4M6uhl4JUxwFbWzox_Sx5CXQOS1W0sMJPFeRg',
-      isSelected: false,
-    ),
-  ];
-
-  int get selectedMealsCount => meals.where((meal) => meal.isSelected).length;
-
-  void toggleMealSelection(int index) {
-    if (meals[index].isSelected) {
-      meals[index].isSelected = false;
-      setState(() {});
-      return;
-    }
-
-    if (selectedMealsCount >= 2) {
-      CustomToast.errorToast("OPPS...", "You can choose just 2 meals per day");
-      return;
-    }
-
-    meals[index].isSelected = true;
-    setState(() {});
-  }
   //Zak delete the initstate
-@override
+  @override
   void initState() {
     super.initState();
-    
+
     // طلب صلاحية الإشعارات (iOS)
     FirebaseMessaging.instance.requestPermission();
 
     // الحصول على الـ token
     FirebaseMessaging.instance.getToken().then((token) {
+      if (token != null) {
+        homeController.sendFcmToken(fcmToken: token);
+      }
       print("FCM Token: $token");
     });
 
@@ -112,7 +50,7 @@ class _HomeViewState extends State<HomeView> {
           content: Text(message.notification?.body ?? "No Body"),
           actions: [
             TextButton(
-              child: Text("OK"),
+              child: const Text("OK"),
               onPressed: () => Navigator.pop(context),
             )
           ],
@@ -125,6 +63,7 @@ class _HomeViewState extends State<HomeView> {
       print("App opened from notification: ${message.data}");
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find();
@@ -155,6 +94,15 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
         actions: [
+          Obx(() => GestureDetector(
+                onTap: themeController.toggleTheme,
+                child: Icon(
+                  themeController.isDarkMode.value
+                      ? Icons.dark_mode
+                      : Icons.light_mode,
+                  color: AppVar.seconndTextColor,
+                ),
+              )),
           IconButton(
             onPressed: () {
               homeController.showCustomMessageDialog(context, homeController);
@@ -167,142 +115,199 @@ class _HomeViewState extends State<HomeView> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          ClipPath(
-            clipper: WaveClipper(),
-            child: Container(
-              height: AppSizeH.s35,
-              color: AppVar.primary,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: AppSizeW.s20, vertical: AppSizeH.s20),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: AppSizeH.s20),
-                  Text(
-                    'Choose up to 2 meals per delivery day',
-                    style: TextStyle(
-                      fontSize: AppSizeSp.s18,
-                      fontWeight: FontWeight.bold,
-                      // height: AppSizeH.s1,
-                      letterSpacing: AppSizeW.s2,
+      body: Obx(() {
+        if (homeController.isLoading.value) {
+          return const Center(
+            child: MainLoadingWidget(),
+          );
+        }
+        return Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppSizeW.s20, vertical: AppSizeH.s20),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: AppSizeH.s20),
+                    CustomeTextFormField(
+                      title: "",
+                      onChanged: (value) {
+                        homeController.searchQuery.value = value;
+                      },
+                      hintText: "Search meals...",
+                      prefixIcon: const Icon(Icons.search),
+                      inputType: TextInputType.text,
+                      controller: TextEditingController(),
+                      validator: null,
                     ),
-                  ),
-                  SizedBox(height: AppSizeH.s20),
-                  ListView.separated(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: AppSizeH.s20),
-                    itemCount: meals.length,
-                    itemBuilder: (context, index) {
-                      return MealItem(
-                        meal: meals[index],
-                        onTap: () => toggleMealSelection(index),
+                    SizedBox(height: AppSizeH.s20),
+                    Text(
+                      'Choose up to 2 meals per delivery day 🎉',
+                      style: TextStyle(
+                        fontSize: AppSizeSp.s15,
+                        fontWeight: FontWeight.bold,
+                        // height: AppSizeH.s1,
+                        // letterSpacing: AppSizeW.s1,
+                      ),
+                    ),
+                    SizedBox(height: AppSizeH.s20),
+                    Obx(() {
+                      return ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: AppSizeH.s20),
+                        itemCount: homeController.filteredMeals.length,
+                        itemBuilder: (context, index) {
+                          final meal = homeController.filteredMeals[index];
+
+                          return Column(
+                            children: [
+                              MealItem(
+                                meal: meal,
+                                onTap: () {
+                                  homeController.toggleMealSelection(
+                                    homeController
+                                        .getAllMealsModel.value.meals[index].id,
+                                  );
+                                },
+                              ),
+                              if (index !=
+                                  homeController
+                                          .getAllMealsModel.value.meals.length -
+                                      1)
+                                ...[]
+                            ],
+                          );
+                        },
                       );
-                    },
-                  ),
-                ],
+                    }),
+                    SizedBox(height: AppSizeH.s80),
+                  ],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            right: AppSizeH.s10,
-            top: AppSizeH.s50,
-            child: Container(
-              width: AppSizeW.s60,
-              height: AppSizeH.s60,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(1000),
+            // Positioned(
+            //   right: AppSizeH.s10,
+            //   top: AppSizeH.s50,
+            //   child: Container(
+            //     width: AppSizeW.s60,
+            //     height: AppSizeH.s60,
+            //     decoration: BoxDecoration(
+            //       color: Theme.of(context).primaryColor,
+            //       borderRadius: BorderRadius.circular(1000),
+            //     ),
+            //     child: Obx(() => GestureDetector(
+            //           onTap: themeController.toggleTheme,
+            //           child: Icon(
+            //             themeController.isDarkMode.value
+            //                 ? Icons.dark_mode
+            //                 : Icons.light_mode,
+            //             color: AppVar.seconndTextColor,
+            //           ),
+            //         )),
+            //   ),
+            // ),
+            ClipPath(
+              clipper: WaveClipper(),
+              child: Container(
+                height: AppSizeH.s35,
+                color: AppVar.primary,
               ),
-              child: Obx(() => GestureDetector(
-                    onTap: themeController.toggleTheme,
-                    child: Icon(
-                      themeController.isDarkMode.value
-                          ? Icons.dark_mode
-                          : Icons.light_mode,
-                      color: AppVar.seconndTextColor,
+            ),
+          ],
+        );
+      }),
+      bottomSheet: Obx(() {
+        return homeController.isLoading.value
+            ? const SizedBox.shrink()
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        // bottom: AppSizeH.s10,
+                        // top: AppSizeH.s10,
+                        left: AppSizeW.s4,
+                        right: AppSizeW.s4),
+                    child: Text(
+                      "",
+                      // selectedMealsCount > 2
+                      //     ? 'You have selected $selectedMealsCount meals. Please remove one to proceed.'
+                      //     : 'You have selected $selectedMealsCount meals.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        // color: AppVar.primary,
+                        fontSize: AppSizeSp.s14,
+                        fontWeight: FontWeight.normal,
+                        height: AppSizeH.s1,
+                      ),
                     ),
-                  )),
-            ),
-          )
-        ],
-      ),
-      bottomSheet: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-                bottom: AppSizeH.s10,
-                top: AppSizeH.s10,
-                left: AppSizeW.s4,
-                right: AppSizeW.s4),
-            child: Text(
-              selectedMealsCount > 2
-                  ? 'You have selected $selectedMealsCount meals. Please remove one to proceed.'
-                  : 'You have selected $selectedMealsCount meals.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                // color: AppVar.primary,
-                fontSize: AppSizeSp.s14,
-                fontWeight: FontWeight.normal,
-                height: AppSizeH.s1,
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: AppSizeW.s20),
-            width: double.infinity,
-            // height: AppSizeH.s12,
-            child: ElevatedButton(
-              onPressed: selectedMealsCount <= 2 ? () {} : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppVar.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSizeR.s12),
-                ),
-              ),
-              child: Text(
-                'Confirm Selection',
-                style: TextStyle(
-                  color: AppVar.seconndTextColor,
-                  fontSize: AppSizeSp.s16,
-                  letterSpacing: AppSizeSp.s3,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: AppSizeH.s20)
-        ],
-      ),
+                  ),
+                  Obx(() {
+                    Widget child;
+
+                    if (homeController.isConfirmitionLoading.value) {
+                      child = const MainLoadingWidget();
+                    } else if (homeController
+                        .showLottieAnimationForConfirmation.value) {
+                      child = Center(
+                        child: SizedBox(
+                          width: AppSizeW.s50,
+                          height: AppSizeH.s50,
+                          child: Lottie.asset(
+                            'assets/Lottie/Animation - 1726871315481.json',
+                            repeat: false,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      );
+                    } else {
+                      child = Text(
+                        'Confirm Selection',
+                        style: TextStyle(
+                          color: AppVar.seconndTextColor,
+                          fontSize: AppSizeSp.s16,
+                          letterSpacing: AppSizeSp.s3,
+                        ),
+                      );
+                    }
+
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: AppSizeW.s20),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: homeController.isConfirmitionLoading.value
+                            ? () {}
+                            : () {
+                                homeController.confirmSelectedMeals();
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppVar.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppSizeR.s12),
+                          ),
+                        ),
+                        child: child,
+                      ),
+                    );
+                  }),
+                  SizedBox(height: AppSizeH.s20),
+                ],
+              );
+      }),
     );
   }
 }
 
-class Meal {
-  final String name;
-  final String description;
-  final String imageUrl;
-  bool isSelected;
-
-  Meal({
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    this.isSelected = false,
-  });
-}
-
 class MealItem extends StatelessWidget {
-  final Meal meal;
+  final HomeController homeController = Get.find<HomeController>();
+
+  final MealModel meal;
   final VoidCallback onTap;
 
-  const MealItem({
+  MealItem({
     super.key,
     required this.meal,
     required this.onTap,
@@ -310,93 +315,173 @@ class MealItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSizeR.s12),
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    Color cardColor = isDark ? Colors.grey[850]! : Colors.white;
+    return Card(
+      color: cardColor,
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSizeR.s10),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Container(
+            padding: EdgeInsets.all(AppSizeW.s6),
+            width: AppSizeW.s50,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(AppSizeR.s10),
+                    bottomRight: Radius.circular(AppSizeR.s10)),
+                color: AppVar.warning),
+            child: Text(
+              meal.id.toString(),
+              style: const TextStyle(
+                color: AppVar.seconndTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: AppSizeH.s10),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSizeW.s10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  meal.name,
-                  style: TextStyle(
-                    fontSize: AppSizeSp.s16,
-                    fontWeight: FontWeight.bold,
-                    height: AppSizeH.s1,
-                  ),
-                ),
-                SizedBox(height: AppSizeH.s10),
-                Text(
-                  meal.description,
-                  style: TextStyle(
-                    color: AppVar.primary,
-                    fontSize: AppSizeSp.s14,
-                    fontWeight: FontWeight.normal,
-                    height: AppSizeH.s1,
-                  ),
-                ),
-                SizedBox(height: AppSizeH.s15),
-                SizedBox(
-                  height: AppSizeH.s30,
-                  child: ElevatedButton.icon(
-                    onPressed: onTap,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: meal.isSelected
-                          ? AppVar.primarySoft
-                          : Theme.of(context).splashColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSizeR.s8),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        meal.name,
+                        style: TextStyle(
+                          fontSize: AppSizeSp.s16,
+                          fontWeight: FontWeight.bold,
+                          height: AppSizeH.s1,
+                        ),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: AppSizeW.s4),
-                      minimumSize: Size(AppSizeW.s80, AppSizeH.s0),
-                    ),
-                    label: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          meal.isSelected ? 'Added' : 'Add',
-                          style: TextStyle(
-                            color: meal.isSelected
-                                ? AppVar.seconndTextColor
-                                : Theme.of(context).disabledColor,
-                            fontSize: AppSizeSp.s14,
-                            fontWeight: FontWeight.w500,
-                            height: AppSizeH.s1,
-                          ),
+                      SizedBox(height: AppSizeH.s10),
+                      Text(
+                        meal.description,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: TextStyle(
+                          color: AppVar.primary,
+                          fontSize: AppSizeSp.s14,
+                          fontWeight: FontWeight.normal,
+                          height: AppSizeH.s1,
                         ),
-                        Icon(
-                          meal.isSelected ? Icons.check : Icons.add,
-                          size: AppSizeSp.s18,
-                          color: meal.isSelected
-                              ? AppVar.seconndTextColor
-                              : Theme.of(context).disabledColor,
-                        ),
-                      ],
+                      ),
+                      SizedBox(height: AppSizeH.s15),
+                    ],
+                  ),
+                ),
+                SizedBox(width: AppSizeW.s4),
+                Expanded(
+                  flex: 1,
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppSizeR.s12),
+                      child: meal.imgs.isNotEmpty
+                          ? Image.network(
+                              //Note: ZAK DONT FORGET TO CHANGE THIS URL
+                              "http://10.0.2.2:8000/${meal.imgs[0]}",
+                              errorBuilder: (BuildContext context,
+                                  Object exception, StackTrace? stackTrace) {
+                                return Image.asset("assets/images/icon.png");
+                              },
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset("assets/images/icon.png"),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(width: AppSizeW.s4),
-          Expanded(
-            flex: 1,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppSizeR.s12),
-                child: Image.network(
-                  meal.imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
+          SizedBox(height: AppSizeH.s10),
+          Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: AppSizeW.s10, vertical: AppSizeH.s5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                    height: AppSizeH.s30,
+                    child: Obx(() {
+                      final isSelected =
+                          homeController.selectedMealIds.contains(meal.id);
+                      return ElevatedButton.icon(
+                        onPressed: onTap,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isSelected
+                              ? AppVar.primarySoft
+                              : Theme.of(context).splashColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppSizeR.s8),
+                          ),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: AppSizeW.s4),
+                          minimumSize: Size(AppSizeW.s80, AppSizeH.s0),
+                        ),
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              isSelected ? 'Added' : 'Add',
+                              style: TextStyle(
+                                color: isSelected
+                                    ? AppVar.seconndTextColor
+                                    : Theme.of(context).disabledColor,
+                                fontSize: AppSizeSp.s14,
+                                fontWeight: FontWeight.w500,
+                                height: AppSizeH.s1,
+                              ),
+                            ),
+                            Icon(
+                              isSelected ? Icons.check : Icons.add,
+                              size: AppSizeSp.s18,
+                              color: isSelected
+                                  ? AppVar.seconndTextColor
+                                  : Theme.of(context).disabledColor,
+                            ),
+                          ],
+                        ),
+                      );
+                    })),
+                TextButton(
+                    onPressed: () {
+                      Get.to(
+                        () => MealDetailsView(meal: meal),
+                      );
+                    },
+                    child: Row(
+                      spacing: AppSizeH.s2,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Details..",
+                          style: TextStyle(
+                              letterSpacing: 1,
+                              decoration: TextDecoration.underline,
+                              color: AppVar.primary,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Icon(
+                          size: AppSizeW.s11,
+                          Icons.arrow_forward_ios_rounded,
+                          color: AppVar.primary,
+                        ),
+                      ],
+                    )),
+              ],
             ),
-          ),
+          )
         ],
       ),
     );

@@ -26,13 +26,7 @@ class NotifactionView extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          ClipPath(
-            clipper: WaveClipper(),
-            child: Container(
-              height: AppSizeH.s35,
-              color: AppVar.primary,
-            ),
-          ),
+
           Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSizeW.s20,
@@ -87,6 +81,13 @@ class NotifactionView extends StatelessWidget {
                       ],
                     );
                   })),
+            ClipPath(
+            clipper: WaveClipper(),
+            child: Container(
+              height: AppSizeH.s35,
+              color: AppVar.primary,
+            ),
+          ),
         ],
       ),
     );

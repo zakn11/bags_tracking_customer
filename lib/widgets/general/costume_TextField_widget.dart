@@ -3,15 +3,16 @@ import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 
 class CustomeTextFormField extends StatefulWidget {
-  CustomeTextFormField({
-    Key? key,
+  const CustomeTextFormField({
+    super.key,
     required this.hintText,
     required this.inputType,
     required this.title,
     required this.controller,
     required this.validator,
     @required this.prefixIcon,
-  }) : super(key: key);
+    @required this.onChanged,
+  });
 
   final String hintText;
   final String title;
@@ -19,6 +20,7 @@ class CustomeTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final Icon? prefixIcon;
+  final void Function(String)? onChanged;
   @override
   State<CustomeTextFormField> createState() => _CustomeTextFormFieldState();
 }
@@ -57,6 +59,7 @@ class _CustomeTextFormFieldState extends State<CustomeTextFormField> {
         // ),
         //2
         TextFormField(
+          onChanged: widget.onChanged,
           focusNode: _focusNode,
           controller: widget.controller,
           keyboardType: widget.inputType,
@@ -64,8 +67,8 @@ class _CustomeTextFormFieldState extends State<CustomeTextFormField> {
               widget.title == "Password" && !_isPasswordVisible ? true : false,
           cursorColor: AppVar.primary,
           style: TextStyle(
-            color: AppVar.textColor, 
-            fontSize: AppVar.littelFontSize, 
+            color: AppVar.textColor,
+            fontSize: AppVar.littelFontSize,
           ),
           decoration: InputDecoration(
             prefixIcon: widget.prefixIcon,
@@ -89,22 +92,20 @@ class _CustomeTextFormFieldState extends State<CustomeTextFormField> {
                 : Theme.of(context).brightness == Brightness.dark
                     ? const Color(0xff2B2B2B)
                     : const Color(0xff5555),
-            filled: true,
+            // filled: true,
             hintText: widget.hintText,
             hintStyle: const TextStyle(
                 color: Color.fromARGB(71, 105, 105, 105), fontSize: 16),
 
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey.shade300, width: 2.0),
-              borderRadius:
-                  BorderRadius.circular(AppSizeR.s20),
+              borderRadius: BorderRadius.circular(AppSizeR.s10),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: AppVar.primary, width: AppSizeW.s2),
-              borderRadius:
-                  BorderRadius.circular(AppSizeR.s20),
+              borderRadius: BorderRadius.circular(AppSizeR.s15),
             ),
-            contentPadding:  EdgeInsets.all(AppSizeW.s15),
+            contentPadding: EdgeInsets.all(AppSizeW.s15),
           ),
           validator: widget.validator,
         ),

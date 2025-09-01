@@ -12,6 +12,8 @@ abstract class Routes {
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const QR_RESULT = _Paths.QR_RESULT;
   static const QR_SCANN = _Paths.QR_SCANN;
+  static const MEAL_DETAILS = _Paths.MEAL_DETAILS;
+
 }
 
 abstract class _Paths {
@@ -23,4 +25,6 @@ abstract class _Paths {
   static const NEW_PASSWORD = '/new-password';
   static const FORGOT_PASSWORD = '/forgot-password';
   static const SPLASH_SCREEN = '/splash-screen';
+  static const MEAL_DETAILS = '/meal-details';
+
 }

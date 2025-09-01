@@ -1,74 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tracking_system_app/modules/auth/controller/otp_timer_controller.dart';
+import 'package:tracking_system_app/modules/auth/view/otp/create_new_password_page.dart';
+import 'package:tracking_system_app/modules/auth/view/otp/otp_page.dart';
 import 'package:tracking_system_app/network_util.dart';
 import 'package:tracking_system_app/routes/app_pages.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
 import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
 
 class ForgetPasswordController extends GetxController {
-  final TextEditingController fullNameController = TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
+  bool isEmailValid = true;
+  String email = "";
+
+  String? otpNumber1 = "";
+  String? otpNumber2 = "";
+  String? otpNumber3 = "";
+  String? otpNumber4 = "";
+  String? otpNumber5 = "";
+  String? otpNumber6 = "";
+
+  final TextEditingController emailController = TextEditingController();
+  // final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final formKey = GlobalKey<FormState>();
-  RxBool isWaitAdminApproved = false.obs;
+  final createPasswordFormKey = GlobalKey<FormState>();
+  // RxBool isWaitAdminApproved = false.obs;
   var statusCode = 0.obs;
   var isLoading = false.obs;
 
-  void validateForm() {
-    if (fullNameController.text.isEmpty) {
-      Get.closeAllSnackbars();
-      CustomToast.errorToast('Error', 'Please enter your Full Name');
-      return;
-    }
+  RxBool isOtpComplete = false.obs;
 
-    if (phoneNumberController.text.isEmpty) {
-      Get.closeAllSnackbars();
-      CustomToast.errorToast('Error', 'Please enter your Employee ID');
-
-      return;
-    }
-
-    final RegExp uaePhoneRegex =
-        // 'regex:/^(?:5)\d{8}$/'
-        // RegExp(r'^(?:50|51|52|55|56|58|2|3|4|6|7|9)\d{7}$');
-        RegExp(r'^(?:5)\d{8}$');
-    if (!uaePhoneRegex.hasMatch(phoneNumberController.text)) {
-      Get.closeAllSnackbars();
-      CustomToast.errorToast(
-          'Error', 'Please enter a valid Emirates phone number');
-
-      return;
-    }
-
-    if (passwordController.text.isEmpty) {
-      Get.closeAllSnackbars();
-      CustomToast.errorToast('Error', 'Please enter your password');
-
-      return;
-    } else if (passwordController.text.length < 6) {
-      Get.closeAllSnackbars();
-      CustomToast.errorToast('Error', 'Password must be at least 6 characters');
-
-      return;
-    }
-
-    if (confirmPasswordController.text.isEmpty) {
-      Get.closeAllSnackbars();
-      CustomToast.errorToast('Error', 'Please confirm your password');
-
-      return;
-    } else if (confirmPasswordController.text != passwordController.text) {
-      Get.closeAllSnackbars();
-      CustomToast.errorToast('Error', 'Confirmed password does not match');
-
-      return;
-    }
-
-
-    showLoadingDialog();
-    sendInfoToAdmin();
+  void checkOtpComplete() {
+    isOtpComplete.value = otpNumber1 != "" &&
+        otpNumber2 != "" &&
+        otpNumber3 != "" &&
+        otpNumber4 != "" &&
+        otpNumber5 != "" &&
+        otpNumber6 != "";
   }
 
   void showLoadingDialog() {
@@ -76,39 +46,105 @@ class ForgetPasswordController extends GetxController {
       const Center(
         child: MainLoadingWidget(),
       ),
-      barrierDismissible: false, 
+      barrierDismissible: false,
     );
   }
 
-  Future<void> sendInfoToAdmin() async {
+//=========================== 1 ===========================
+  Future<void> customerForgetPassword({required String email}) async {
     isLoading.value = true;
     try {
-      // await $.flipIfDemo(email: emailC.text);
-      final response = await $.post('/users/reset-password', body: {
-        "phone": phoneNumberController.text,
+      final response =
+          await $.post('/customerForgetPassword', body: {"email": email});
+
+      if (response != null) {
+        Get.to(() => OtpPage(
+              email: emailController.text,
+            ));
+        CustomToast.successToast("Good",
+            "A verification code has been sent to your email. It will expire in 5 minutes.");
+        final TimerController timerController = Get.put(TimerController());
+
+        timerController.startTimer();
+      }
+
+      isLoading.value = false;
+    } catch (e) {
+      CustomToast.errorToast("Error", "Error because : ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+//=========================== 2 ===========================
+  Future<void> customerCheckCode() async {
+    isLoading.value = true;
+    try {
+      final response = await $.post('/customerCheckCode', body: {
+        "code":
+            "$otpNumber1$otpNumber2$otpNumber3$otpNumber4$otpNumber5$otpNumber6"
+      });
+
+      if (response != null) {
+        Get.to(() => const CreateNewPasswordPage());
+        // CustomToast.successToast("Good", "A verification code has been sent to your email. It will expire in 5 minutes.");
+      }
+
+      isLoading.value = false;
+    } catch (e) {
+      CustomToast.errorToast("Error", "Error because : ${e.toString()}");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+//=========================== 3 ===========================
+  Future<void> sendRequestToLoginWithNewPassword() async {
+    isLoading.value = true;
+    try {
+      final response = await $.post('/customerResetPassword', body: {
+        "code":
+            "$otpNumber1$otpNumber2$otpNumber3$otpNumber4$otpNumber5$otpNumber6",
         "password": passwordController.text,
-        "confirm_password": confirmPasswordController.text,
+        "password_confirmation": confirmPasswordController.text,
       });
       // Get.back();
 
 //if success :
 
       if (response != null) {
-        isWaitAdminApproved.value = true;
-        Future.delayed(const Duration(seconds: 3), () {
-          isWaitAdminApproved.value = false;
-          Get.offAllNamed(Routes.LOGIN);
-        });
+        // loginAfterSuccessResetPassword();
+        passwordController.text = "";
+        confirmPasswordController.text = "";
+        otpNumber1 = "";
+        otpNumber2 = "";
+        otpNumber3 = "";
+        otpNumber4 = "";
+        otpNumber5 = "";
+        otpNumber6 = "";
+        Get.offAllNamed(Routes.LOGIN);
+        CustomToast.successToast(
+            "Good", "Password created successfully, try to Login");
       }
 
       isLoading.value = false;
     } catch (e) {
       // if (Get.isDialogOpen!) {
-      //   Get.back(); 
+      //   Get.back();
       // }
       CustomToast.errorToast("Error", "Error because : ${e.toString()}");
     } finally {
       isLoading.value = false;
     }
+  }
+
+  String maskEmailOtp(String email) {
+    int visibleChars = 6;
+    int index = email.indexOf('@');
+    if (index <= visibleChars) return email;
+    String maskedPart = '*' * (index - visibleChars);
+    return email.substring(0, visibleChars) +
+        maskedPart +
+        email.substring(index);
   }
 }
