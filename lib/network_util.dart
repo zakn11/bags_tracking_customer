@@ -14,13 +14,11 @@ import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
 
 class $ {
   // static String? token1;
-  //zak delete this
   static String? token1;
   static String? role;
   static String? phoneNumber1;
   static String? password1;
   // static const int _RESPONSE_STATUS_AUTHORIZATION_ERROR = 401;
-  //change th the endpoint ZAK============================
 
   static String _URL = "http://10.0.2.2:8000/api";
   static String BASE_URL = "http://10.0.2.2:8000";
@@ -411,7 +409,7 @@ class $ {
     }
   }
 
-//zak
+
   static Future<Map<String, String>?>
       getpasswordAndPhoneCachedCredentials() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();

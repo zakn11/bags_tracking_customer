@@ -40,11 +40,6 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-              <!-- zak -->
-              <!-- <meta-data
-                android:name="flutterEmbedding"
-                android:value="2" /> -->
-              <!-- zak -->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -1,12 +1,9 @@
 import 'package:get/get.dart';
 import 'package:tracking_system_app/modules/auth/binding/forget_password_binding.dart';
 import 'package:tracking_system_app/modules/auth/binding/login_binding.dart';
-import 'package:tracking_system_app/modules/auth/binding/register_binding.dart';
 import 'package:tracking_system_app/modules/auth/view/login_view.dart';
 import 'package:tracking_system_app/modules/auth/view/otp/forget_password_page.dart';
-import 'package:tracking_system_app/modules/auth/view/regester_view.dart';
 import 'package:tracking_system_app/modules/home/binding/home_binding.dart';
-import 'package:tracking_system_app/modules/home/view/meal_details_view.dart';
 import 'package:tracking_system_app/modules/main_navigation/views/main_navigation.dart';
 import 'package:tracking_system_app/modules/splash/splash_screen.dart';
 
@@ -29,12 +26,6 @@ class AppPages {
       name: _Paths.LOGIN,
       page: () => const LoginView(),
       binding: LoginBinding(),
-      transition: Transition.fadeIn,
-    ),
-    GetPage(
-      name: _Paths.REGISTER,
-      page: () => const RegesterView(),
-      binding: RegisterBinding(),
       transition: Transition.fadeIn,
     ),
     GetPage(

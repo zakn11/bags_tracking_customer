@@ -49,10 +49,6 @@ class _CustomeLoginTextFormFieldState extends State<CustomeLoginTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isLandscape = screenWidth > screenHeight;
-    final isTablet = screenWidth > 600;
     final textFieldFontSize = AppSizeSp.s16;
     final contentPaddingVertical = AppSizeH.s12;
 

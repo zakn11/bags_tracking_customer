@@ -20,7 +20,7 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   RxBool isLoading = false.obs;
-  //----- zak ----------
+
   RxInt lockoutTimer = 30.obs;
   Timer? countdownTimer;
   RxBool isButtonLooked = false.obs;
@@ -99,8 +99,7 @@ You can use fingerprint on your next login.''',
       );
       return;
     }
-// بي هيلثي كوستمر هاااااااااااااااام تشفر الباسوورد وقت التخزين
-//zak
+
     try {
       final bool didAuthenticate = await localAuth.authenticate(
         localizedReason: 'Authenticate to login to the app',
@@ -208,7 +207,7 @@ You can use fingerprint on your next login.''',
       isScrollControlled: true,
     );
   }
-  //----- zak ----------
+
 
   bool validateForm() {
     if (phoneNumberController.text.isEmpty) {

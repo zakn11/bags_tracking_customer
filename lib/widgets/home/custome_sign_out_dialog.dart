@@ -4,6 +4,7 @@ import 'package:tracking_system_app/modules/home/controller/home_controller.dart
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class CustomSignOutDialog extends StatelessWidget {
   CustomSignOutDialog({super.key});
@@ -13,6 +14,8 @@ class CustomSignOutDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
+    final AppStrings() = AppStrings();
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppSizeR.s10),
@@ -26,27 +29,23 @@ class CustomSignOutDialog extends StatelessWidget {
             children: [
               Obx(
                 () => Column(
-                  mainAxisSize: MainAxisSize
-                      .min, 
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                   
-                     SizedBox(
-                        height: AppSizeH.s5), 
-                     Center(
+                    SizedBox(height: AppSizeH.s5),
+                    Center(
                       child: Text(
-                        "Sign Out",
+                        AppStrings().signOut,
                         style: TextStyle(
                           fontSize: AppSizeSp.s22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                     SizedBox(
-                        height: AppSizeH.s20), 
-                     Center(
+                    SizedBox(height: AppSizeH.s20),
+                    Center(
                       child: Text(
-                        "Do you want to log out?",
+                        AppStrings().doYouWantToLogOut,
                         style: TextStyle(
                           color: Color(0xff878787),
                           fontSize: AppSizeSp.s13,
@@ -54,27 +53,26 @@ class CustomSignOutDialog extends StatelessWidget {
                         ),
                       ),
                     ),
-                     SizedBox(
-                        height: AppSizeH.s20),
+                    SizedBox(height: AppSizeH.s20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        //-------------------Cancel button-------------------
                         GestureDetector(
                           onTap: () {
                             homeController.exitSignOutDialog();
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                                vertical: AppSizeH.s10, horizontal: AppSizeW.s20),
+                                vertical: AppSizeH.s10,
+                                horizontal: AppSizeW.s20),
                             decoration: BoxDecoration(
                               border:
                                   Border.all(color: const Color(0xffD6D6D6)),
                               color: Colors.transparent,
                               borderRadius: BorderRadius.circular(AppSizeR.s20),
                             ),
-                            child:  Text(
-                              "Cancel",
+                            child: Text(
+                              AppStrings().cancel,
                               style: TextStyle(
                                 color: AppVar.textColor,
                                 fontSize: AppSizeSp.s13,
@@ -83,21 +81,20 @@ class CustomSignOutDialog extends StatelessWidget {
                             ),
                           ),
                         ),
-                        //-------------------Log out-------------------------
                         GestureDetector(
                           onTap: () async {
                             await homeController.logout();
-                            // homeController.sendToAdmin();
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                                vertical: AppSizeH.s10, horizontal: AppSizeW.s20),
+                                vertical: AppSizeH.s10,
+                                horizontal: AppSizeW.s20),
                             decoration: BoxDecoration(
                               color: const Color(0xffFE8C00),
                               borderRadius: BorderRadius.circular(AppSizeR.s20),
                             ),
-                            child:  Text(
-                              "Log Out",
+                            child: Text(
+                              AppStrings().logOut,
                               style: TextStyle(
                                 color: AppVar.seconndTextColor,
                                 fontSize: AppSizeSp.s13,

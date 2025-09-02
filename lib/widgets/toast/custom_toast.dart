@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 
 class CustomToast {
   static errorToast(String? title, String? message) {
     Get.rawSnackbar(
-      duration: Duration(seconds: 4),
+      duration: const Duration(seconds: 4),
       dismissDirection: DismissDirection.horizontal,
       messageText: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -24,8 +25,8 @@ class CustomToast {
                 Container(
                   margin: EdgeInsets.only(bottom: AppSizeH.s4),
                   child: Text(
-                    title ?? "error",
-                    style: TextStyle(
+                    title ?? AppStrings().error,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'poppins',
@@ -33,8 +34,8 @@ class CustomToast {
                   ),
                 ),
                 Text(
-                  message ?? "Add your error message here",
-                  style: TextStyle(color: Colors.white),
+                  message ??AppStrings().addYourErrorMessage,
+                  style: const TextStyle(color: Colors.white),
                 ),
               ],
             ),
@@ -51,7 +52,7 @@ class CustomToast {
 
   static successToast(String? title, String? message) {
     Get.rawSnackbar(
-      duration: Duration(seconds: 4),
+      duration: const Duration(seconds: 4),
       dismissDirection: DismissDirection.horizontal,
       messageText: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,8 +69,8 @@ class CustomToast {
                 Container(
                   margin: EdgeInsets.only(bottom: AppSizeH.s4),
                   child: Text(
-                    title ?? "Success",
-                    style: TextStyle(
+                    title ??AppStrings().success,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'poppins',
@@ -77,8 +78,8 @@ class CustomToast {
                   ),
                 ),
                 Text(
-                  message ?? "Add your success message here",
-                  style: TextStyle(color: Colors.white),
+                  message ?? AppStrings().addYourSuccessMessage,
+                  style: const TextStyle(color: Colors.white),
                 ),
               ],
             ),

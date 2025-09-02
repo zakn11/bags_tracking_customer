@@ -7,6 +7,7 @@ import 'package:tracking_system_app/modules/profile/controller/profile_controlle
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class OrdersView extends StatelessWidget {
   OrdersView({super.key});
@@ -16,6 +17,7 @@ class OrdersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final AppStrings() = AppStrings();
 
     Color backgroundColor = isDark ? Colors.black : Colors.white;
     Color cardColor = isDark ? Colors.grey[850]! : Colors.white;
@@ -28,7 +30,7 @@ class OrdersView extends StatelessWidget {
         backgroundColor: AppVar.primary,
         elevation: 0,
         title: Text(
-          'My Orders',
+          AppStrings().myOrders,
           style: TextStyle(
             fontSize: AppSizeSp.s18,
             fontWeight: FontWeight.bold,
@@ -89,7 +91,7 @@ class OrdersView extends StatelessWidget {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Order #${order.id}',
+                                          '${AppStrings().order} #${order.id}',
                                           style: TextStyle(
                                             fontSize: AppSizeSp.s16,
                                             fontWeight: FontWeight.bold,
@@ -102,12 +104,12 @@ class OrdersView extends StatelessWidget {
                                             vertical: AppSizeH.s4,
                                           ),
                                           decoration: BoxDecoration(
-                                            color:
-                                                order.status == "In preparation"
-                                                    ? statusProcessing
-                                                        .withValues(alpha: 0.2)
-                                                    : statusDelivered
-                                                        .withValues(alpha: 0.2),
+                                            color: order.status ==
+                                                    AppStrings().inPreparation
+                                                ? statusProcessing.withValues(
+                                                    alpha: 0.2)
+                                                : statusDelivered.withValues(
+                                                    alpha: 0.2),
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),
@@ -116,7 +118,7 @@ class OrdersView extends StatelessWidget {
                                             style: TextStyle(
                                               fontSize: AppSizeSp.s12,
                                               color: order.status ==
-                                                      "In preparation"
+                                                      AppStrings().inPreparation
                                                   ? statusProcessing
                                                   : statusDelivered,
                                               fontWeight: FontWeight.w600,
@@ -127,7 +129,7 @@ class OrdersView extends StatelessWidget {
                                     ),
                                     SizedBox(height: AppSizeH.s8),
                                     Text(
-                                      'Meals: ${order.meal1} | ${order.meal2}\n${profileController.getCustomerInfo.value.address != "" ? "Delivery Address: ${profileController.getCustomerInfo.value.address}" : ""}',
+                                      '${AppStrings().meals}: ${order.meal1} | ${order.meal2}\n${profileController.getCustomerInfo.value.address != "" ? "${AppStrings().deliveryAddress} ${profileController.getCustomerInfo.value.address}" : ""}',
                                       style: TextStyle(
                                         fontSize: AppSizeSp.s14,
                                         color: textColor,
@@ -145,22 +147,25 @@ class OrdersView extends StatelessWidget {
                                             color: AppVar.primary,
                                           ),
                                         ),
-                                        if (order.status == "In preparation")
-                                          Obx(
-                                             () {
-                                              if(ordersController.isDeleteLoading.value){
-                                                return CircularProgressIndicator(color: AppVar.primary,strokeWidth: 2);
-                                              }
-                                              return IconButton(
-                                                  onPressed: () {
-                                                    ordersController.deleteOrder(id: order.id);
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.delete,
-                                                    color: Colors.red,
-                                                  ));
+                                        if (order.status ==
+                                            AppStrings().inPreparation)
+                                          Obx(() {
+                                            if (ordersController
+                                                .isDeleteLoading.value) {
+                                              return CircularProgressIndicator(
+                                                  color: AppVar.primary,
+                                                  strokeWidth: 2);
                                             }
-                                          )
+                                            return IconButton(
+                                                onPressed: () {
+                                                  ordersController.deleteOrder(
+                                                      id: order.id);
+                                                },
+                                                icon: const Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ));
+                                          })
                                       ],
                                     ),
                                     SizedBox(height: AppSizeH.s12),
@@ -176,7 +181,6 @@ class OrdersView extends StatelessWidget {
                 return Center(
                   child: SvgPicture.asset(
                     'assets/images/empty.svg',
-                    // ignore: deprecated_member_use
                     color: AppVar.primary,
                     width: AppSizeW.s100,
                     height: AppSizeH.s100,

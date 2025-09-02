@@ -5,16 +5,18 @@ import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/auth/costume_login_TextField_widget.dart';
 import 'package:tracking_system_app/widgets/general/defult_button.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class CreateNewPasswordPage extends StatelessWidget {
   const CreateNewPasswordPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final AppStrings() = AppStrings();
+
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("Create New Password"),
+        title: Text(AppStrings().createNewPassword),
         titleTextStyle: const TextStyle(
           color: Color(0xff464646),
           fontSize: 20,
@@ -24,7 +26,6 @@ class CreateNewPasswordPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         elevation: 0.0,
         leading: IconButton(
-          // color: AppVar.textColor,
           onPressed: () {
             Get.back();
           },
@@ -59,11 +60,11 @@ class CreateNewPasswordPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 20),
                               child: Text(
-                                "Create Your New Password!",
+                                AppStrings().createYourNewPassword,
                                 style: TextStyle(fontSize: 16),
                               ),
                             ),
@@ -73,31 +74,28 @@ class CreateNewPasswordPage extends StatelessWidget {
                               prefixIcon: const Icon(Icons.lock),
                               inputType: TextInputType.text,
                               hintText: '••••••••••••••••',
-                              title: 'Password',
+                              title: AppStrings().password,
                               controller: controller.passwordController,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
+                                  return AppStrings().pleaseEnterPassword;
                                 }
                                 return null;
                               },
                             ),
-                            // SizedBox(
-                            //   height: MediaQuery.of(context).size.height * 0.02,
-                            // ),
                             CustomeLoginTextFormField(
                               prefixIcon: const Icon(Icons.lock),
                               inputType: TextInputType.text,
                               hintText: '••••••••••••••••',
-                              title: 'Password',
+                              title: AppStrings().password,
                               controller: controller.confirmPasswordController,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please confirm your password';
+                                  return AppStrings().pleaseConfirmPassword;
                                 }
                                 if (value !=
                                     controller.passwordController.text) {
-                                  return 'Passwords do not match';
+                                  return AppStrings().passwordsDoNotMatch;
                                 }
                                 return null;
                               },
@@ -112,25 +110,13 @@ class CreateNewPasswordPage extends StatelessWidget {
                           buttonColor: AppVar.primary,
                           borderColor: Colors.transparent,
                           textColor: Colors.white,
-                          title: "Continue",
+                          title: AppStrings().continue1,
                           onPressed: () async {
                             if (controller.createPasswordFormKey.currentState!
                                 .validate()) {
                               await controller
                                   .sendRequestToLoginWithNewPassword();
                             }
-                            // if (controller.passwordController.text.isEmpty ||
-                            //     controller.confirmPasswordController.text.isEmpty) {
-                            //   Get.snackbar('Error', 'Please fill in all fields',
-                            //       snackPosition: SnackPosition.TOP);
-                            //   return;
-                            // }
-                            // if (controller.passwordController.text !=
-                            //     controller.confirmPasswordController.text) {
-                            //   Get.snackbar('Error', 'Passwords do not match',
-                            //       snackPosition: SnackPosition.TOP);
-                            //   return;
-                            // }
                           },
                         ),
                       )

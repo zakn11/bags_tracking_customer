@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>Stripe Payment</string>
+	<key>CFBundleExecutable</key>
 	<key>CFBundleDisplayName</key>
 	<string>Be Healthy</string>
 	<key>CFBundleExecutable</key>
@@ -52,13 +54,13 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app needs access to your photo library to upload or use images</string>
 
-    <!-- Internet Access (Optional) -->
+    <!-- Internet Access -->
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
-	<!-- Internet Access (Optional) 2 last zak-->
+	<!-- Internet Access -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need your location for network monitoring</string>
 

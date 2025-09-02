@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tracking_system_app/model/get_all_meals_model.dart';
 import 'package:tracking_system_app/network_util.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 import 'package:tracking_system_app/widgets/home/custome_message_dialog.dart';
 import 'package:tracking_system_app/widgets/home/custome_sign_out_dialog.dart';
 import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
@@ -145,10 +146,12 @@ class HomeController extends GetxController {
         if (MediaQuery.of(context).orientation == Orientation.landscape) {
           return SingleChildScrollView(
               child: CustomMessageDialog(
-                  title: "Welcome", subtitle: "How can we assest you today?"));
+                  title: AppStrings().welcome,
+                  subtitle: AppStrings().howCanWeAssestyouToday));
         } else {
           return CustomMessageDialog(
-              title: "Welcome", subtitle: "How can we assest you today?");
+              title: AppStrings().welcome,
+              subtitle: AppStrings().howCanWeAssestyouToday);
         }
       },
     );
@@ -180,8 +183,9 @@ class HomeController extends GetxController {
       isLoading.value = false;
     }
   }
+
   //=================================== FCM token ==================================
-   Future<void> sendFcmToken({required String fcmToken}) async {
+  Future<void> sendFcmToken({required String fcmToken}) async {
     isLoading.value = true;
     try {
       final response = await $.post('/createFcmToken', body: {
@@ -189,11 +193,10 @@ class HomeController extends GetxController {
       });
 
       if (response != null) {
-log("FCM RESPONSE: $response");
+        log("FCM RESPONSE: $response");
       }
     } catch (e) {
       CustomToast.errorToast("Error", "Error because : ${e.toString()}");
-    } finally {
-    }
+    } finally {}
   }
 }

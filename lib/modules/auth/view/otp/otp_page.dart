@@ -9,6 +9,7 @@ import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/auth/number_fild_otp.dart';
 import 'package:tracking_system_app/widgets/general/defult_button.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class OtpPage extends StatelessWidget {
   final String email;
@@ -24,6 +25,8 @@ class OtpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppStrings() = AppStrings();
+
     return Stack(
       children: [
         Scaffold(
@@ -40,11 +43,10 @@ class OtpPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //1
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: Text(
-                      "Verification code",
+                      AppStrings().verificationCode,
                       style: TextStyle(
                         color: Theme.of(context).brightness == Brightness.dark
                             ? AppVar.seconndTextColor
@@ -54,14 +56,12 @@ class OtpPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  //2
-                  const Text(
-                    "We have sent the code verification to",
+                  Text(
+                    AppStrings().weHaveSentCode,
                     style: TextStyle(
                       color: Color(0xff45444B),
                     ),
                   ),
-                  //3
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: Row(
@@ -80,15 +80,12 @@ class OtpPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  //4
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      //NOTE: here i will Save the PINs Data
                       CustomeNumberFildOTP(
                           onChanged: (value) {
                             if (value!.length == 1) {
-                              //to go to another textfild directly
                               FocusScope.of(context).nextFocus();
                             }
                             print("$value");
@@ -96,32 +93,29 @@ class OtpPage extends StatelessWidget {
                             controller.checkOtpComplete();
                           },
                           onSaved: (pin1) {}),
-                      CustomeNumberFildOTP(onChanged: (value) {
-                        if (value!.length == 1) {
-                          //to go to another textfild directly
-                          FocusScope.of(context).nextFocus();
-                        }
-                        print("$value");
-                        controller.otpNumber2 = value;
-                        controller.checkOtpComplete();
-                      }, onSaved: (pin2) {
-                        // controller.otpNumber2 = pin2;
-                      }),
-                      CustomeNumberFildOTP(onChanged: (value) {
-                        if (value!.length == 1) {
-                          //to go to another textfild directly
-                          FocusScope.of(context).nextFocus();
-                        }
-                        print("$value");
-                        controller.otpNumber3 = value;
-                        controller.checkOtpComplete();
-                      }, onSaved: (pin3) {
-                        // controller.otpNumber3 = pin3;
-                      }),
                       CustomeNumberFildOTP(
                           onChanged: (value) {
                             if (value!.length == 1) {
-                              //to go to another textfild directly
+                              FocusScope.of(context).nextFocus();
+                            }
+                            print("$value");
+                            controller.otpNumber2 = value;
+                            controller.checkOtpComplete();
+                          },
+                          onSaved: (pin2) {}),
+                      CustomeNumberFildOTP(
+                          onChanged: (value) {
+                            if (value!.length == 1) {
+                              FocusScope.of(context).nextFocus();
+                            }
+                            print("$value");
+                            controller.otpNumber3 = value;
+                            controller.checkOtpComplete();
+                          },
+                          onSaved: (pin3) {}),
+                      CustomeNumberFildOTP(
+                          onChanged: (value) {
+                            if (value!.length == 1) {
                               FocusScope.of(context).nextFocus();
                             }
                             print("$value");
@@ -132,7 +126,6 @@ class OtpPage extends StatelessWidget {
                       CustomeNumberFildOTP(
                           onChanged: (value) {
                             if (value!.length == 1) {
-                              //to go to another textfild directly
                               FocusScope.of(context).nextFocus();
                             }
                             print("$value");
@@ -143,7 +136,6 @@ class OtpPage extends StatelessWidget {
                       CustomeNumberFildOTP(
                           onChanged: (value) {
                             if (value!.length == 1) {
-                              //to go to another textfild directly
                               FocusScope.of(context).nextFocus();
                             }
                             print("$value");
@@ -153,15 +145,14 @@ class OtpPage extends StatelessWidget {
                           onSaved: (pin6) {}),
                     ],
                   ),
-                  //5
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: Center(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text(
-                            "Resend code after ",
+                          Text(
+                            AppStrings().resendCodeAfter,
                             style: TextStyle(
                               color: Color(0xff45444B),
                             ),
@@ -169,8 +160,7 @@ class OtpPage extends StatelessWidget {
                           Obx(
                             () => Center(
                               child: Text(
-                                timerController
-                                    .timerText.value, // Display timer value
+                                timerController.timerText.value,
                                 style: TextStyle(
                                   color: AppVar.primary,
                                 ),
@@ -181,8 +171,6 @@ class OtpPage extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  //6
                   const Spacer(),
                   Row(
                     children: <Widget>[
@@ -201,7 +189,7 @@ class OtpPage extends StatelessWidget {
                               borderColor: timerController.isTimerRunning.value
                                   ? AppVar.secondarySoft
                                   : AppVar.primary,
-                              title: "Resend",
+                              title: AppStrings().resend,
                               onPressed: timerController.isTimerRunning.value
                                   ? () {}
                                   : () async {
@@ -223,7 +211,7 @@ class OtpPage extends StatelessWidget {
                                 ? AppVar.primary
                                 : Colors.grey,
                             borderColor: AppVar.primary,
-                            title: "Confirm",
+                            title: AppStrings().confirm,
                             onPressed: !controller.isOtpComplete.value
                                 ? () {}
                                 : () async {
@@ -246,7 +234,7 @@ class OtpPage extends StatelessWidget {
               ),
             );
           } else {
-            return const SizedBox.shrink(); // Empty container when not loading
+            return const SizedBox.shrink();
           }
         }),
       ],

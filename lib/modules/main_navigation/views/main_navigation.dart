@@ -6,6 +6,7 @@ import 'package:tracking_system_app/modules/notifactions/view/notifaction_view.d
 import 'package:tracking_system_app/modules/orders/view/orders_view.dart';
 import 'package:tracking_system_app/modules/profile/view/profile_view.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -19,7 +20,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   final List<Widget> _widgetOptions = <Widget>[
     const HomeView(),
-     OrdersView(),
+    OrdersView(),
     const NotifactionView(),
     ProfileView(),
   ];
@@ -32,11 +33,12 @@ class _MainNavigationState extends State<MainNavigation> {
       final HomeController homeController = Get.put(HomeController());
       homeController.initialize();
     }
-    
   }
 
   @override
   Widget build(BuildContext context) {
+    final AppStrings() = AppStrings();
+
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Container(
@@ -60,7 +62,7 @@ class _MainNavigationState extends State<MainNavigation> {
                   ),
                   SizedBox(height: AppSizeH.s4),
                   Text(
-                    "Home",
+                    AppStrings().home,
                     style: TextStyle(
                       color: _selectedIndex != 0
                           ? Theme.of(context).hintColor
@@ -73,7 +75,6 @@ class _MainNavigationState extends State<MainNavigation> {
                 ],
               ),
             ),
-//Orders
             GestureDetector(
               onTap: () => _onItemTapped(1),
               child: Column(
@@ -88,7 +89,7 @@ class _MainNavigationState extends State<MainNavigation> {
                   ),
                   SizedBox(height: AppSizeH.s4),
                   Text(
-                    "Orders",
+                    AppStrings().orders,
                     style: TextStyle(
                       color: _selectedIndex != 1
                           ? Theme.of(context).hintColor
@@ -101,7 +102,6 @@ class _MainNavigationState extends State<MainNavigation> {
                 ],
               ),
             ),
-            // Notifactions
             GestureDetector(
               onTap: () => _onItemTapped(2),
               child: Column(
@@ -109,7 +109,6 @@ class _MainNavigationState extends State<MainNavigation> {
                 children: [
                   Icon(
                     Icons.notifications,
-                    // Icons.restaurant_outlined,
                     size: 24,
                     color: _selectedIndex != 2
                         ? Theme.of(context).hintColor
@@ -117,7 +116,7 @@ class _MainNavigationState extends State<MainNavigation> {
                   ),
                   SizedBox(height: AppSizeH.s4),
                   Text(
-                    "Notifactions",
+                    AppStrings().notifications,
                     style: TextStyle(
                       color: _selectedIndex != 2
                           ? Theme.of(context).hintColor
@@ -130,8 +129,6 @@ class _MainNavigationState extends State<MainNavigation> {
                 ],
               ),
             ),
-
-            // Profile
             GestureDetector(
               onTap: () => _onItemTapped(3),
               child: Column(
@@ -139,7 +136,6 @@ class _MainNavigationState extends State<MainNavigation> {
                 children: [
                   Icon(
                     Icons.contact_page_rounded,
-                    // Icons.person_outline,
                     size: 24,
                     color: _selectedIndex != 3
                         ? Theme.of(context).hintColor
@@ -147,7 +143,7 @@ class _MainNavigationState extends State<MainNavigation> {
                   ),
                   SizedBox(height: AppSizeH.s4),
                   Text(
-                    "Profile",
+                    AppStrings().profile,
                     style: TextStyle(
                       color: _selectedIndex != 3
                           ? Theme.of(context).hintColor

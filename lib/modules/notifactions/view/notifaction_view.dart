@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:tracking_system_app/modules/home/view/home_view.dart';
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class NotifactionView extends StatelessWidget {
   const NotifactionView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final AppStrings() = AppStrings();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppVar.primary,
         title: Center(
           child: Text(
-            'Notifications',
+            AppStrings().notifications,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: AppSizeSp.s18,
@@ -26,7 +29,6 @@ class NotifactionView extends StatelessWidget {
       ),
       body: Stack(
         children: [
-
           Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSizeW.s20,
@@ -67,9 +69,7 @@ class NotifactionView extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              //  '2024-2-3',
-
-                              '3 days left',
+                              '3 ${AppStrings().daysLeft}',
                               style: TextStyle(
                                 color: AppVar.primary,
                                 fontSize: AppSizeSp.s14,
@@ -81,7 +81,7 @@ class NotifactionView extends StatelessWidget {
                       ],
                     );
                   })),
-            ClipPath(
+          ClipPath(
             clipper: WaveClipper(),
             child: Container(
               height: AppSizeH.s35,

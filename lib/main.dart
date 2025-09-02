@@ -11,6 +11,7 @@ import 'package:tracking_system_app/network_util.dart';
 import 'package:tracking_system_app/routes/app_pages.dart';
 import 'package:tracking_system_app/shared/shared.dart';
 import 'package:tracking_system_app/style/app_var.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -19,6 +20,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -47,29 +49,41 @@ bool get isTablet {
   @override
   Widget build(BuildContext context) {
     Get.put(LifecycleController());
-    return ScreenUtilInit(
-      designSize: isTablet ? const Size(1194, 834) : const Size(390, 844),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Be Healthy.C',
-          theme: AppVar.lightTheme,
-          darkTheme: AppVar.darkTheme,
-          themeMode: ThemeMode.system,
-          initialRoute: sharedLoginToken != null
-              ? Routes.HOME
-              : Routes.SPLASH_SCREEN, 
-          getPages: AppPages.routes,
-          builder: (context, widget) {
-            //NOTE FROM ZAK:  this makes sure ScreenUtil is available everywhere
-            ScreenUtil.init(context);
-            return widget!;
-          },
-          home: child,
-        );
-      }
+    return EasyLocalization(
+        useOnlyLangCode: true,
+        supportedLocales: const [
+    Locale('en'),
+    Locale('ar'),
+    Locale('fr'),
+  ],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: ScreenUtilInit(
+        designSize: isTablet ? const Size(1194, 834) : const Size(390, 844),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Be Healthy.C',
+            theme: AppVar.lightTheme,
+            darkTheme: AppVar.darkTheme,
+            themeMode: ThemeMode.system,
+            initialRoute: sharedLoginToken != null
+                ? Routes.HOME
+                : Routes.SPLASH_SCREEN, 
+            getPages: AppPages.routes,
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            builder: (context, widget) {
+              ScreenUtil.init(context);
+              return widget!;
+            },
+            home: child,
+          );
+        }
+      ),
     );
   }
 }

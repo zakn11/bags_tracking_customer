@@ -1,4 +1,3 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,6 +10,8 @@ import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/general/costume_TextField_widget.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -21,6 +22,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final HomeController homeController = Get.put(HomeController());
+  final AppStrings appStrings = AppStrings();
 
   //Zak delete the initstate
   @override
@@ -46,11 +48,11 @@ class _HomeViewState extends State<HomeView> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text(message.notification?.title ?? "No Title"),
-          content: Text(message.notification?.body ?? "No Body"),
+          title: Text(message.notification?.title ?? appStrings.noTitle),
+          content: Text(message.notification?.body ?? appStrings.noBody),
           actions: [
             TextButton(
-              child: const Text("OK"),
+              child: Text(appStrings.ok),
               onPressed: () => Navigator.pop(context),
             )
           ],
@@ -83,7 +85,7 @@ class _HomeViewState extends State<HomeView> {
         ),
         title: Center(
           child: Text(
-            'Select Meals',
+            appStrings.selectMeals,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: AppSizeSp.s18,
@@ -94,6 +96,40 @@ class _HomeViewState extends State<HomeView> {
           ),
         ),
         actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(
+              Icons.language,
+              color: AppVar.seconndTextColor,
+            ),
+            onSelected: (String value) {
+              switch (value) {
+                case 'en':
+                  context.setLocale(const Locale('en'));
+                  break;
+                case 'ar':
+                  context.setLocale(const Locale('ar'));
+                  break;
+                case 'fr':
+                  context.setLocale(const Locale('fr'));
+                  break;
+              }
+              Get.updateLocale(Locale(value));
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem<String>(
+                value: 'en',
+                child: Text(AppStrings().english),
+              ),
+              PopupMenuItem<String>(
+                value: 'ar',
+                child: Text(AppStrings().arabic),
+              ),
+              PopupMenuItem<String>(
+                value: 'fr',
+                child: Text(AppStrings().french),
+              ),
+            ],
+          ),
           Obx(() => GestureDetector(
                 onTap: themeController.toggleTheme,
                 child: Icon(
@@ -135,7 +171,7 @@ class _HomeViewState extends State<HomeView> {
                       onChanged: (value) {
                         homeController.searchQuery.value = value;
                       },
-                      hintText: "Search meals...",
+                      hintText: appStrings.searchMeals,
                       prefixIcon: const Icon(Icons.search),
                       inputType: TextInputType.text,
                       controller: TextEditingController(),
@@ -143,12 +179,10 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     SizedBox(height: AppSizeH.s20),
                     Text(
-                      'Choose up to 2 meals per delivery day 🎉',
+                      appStrings.chooseUpTo2Meals,
                       style: TextStyle(
                         fontSize: AppSizeSp.s15,
                         fontWeight: FontWeight.bold,
-                        // height: AppSizeH.s1,
-                        // letterSpacing: AppSizeW.s1,
                       ),
                     ),
                     SizedBox(height: AppSizeH.s20),
@@ -188,27 +222,6 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
             ),
-            // Positioned(
-            //   right: AppSizeH.s10,
-            //   top: AppSizeH.s50,
-            //   child: Container(
-            //     width: AppSizeW.s60,
-            //     height: AppSizeH.s60,
-            //     decoration: BoxDecoration(
-            //       color: Theme.of(context).primaryColor,
-            //       borderRadius: BorderRadius.circular(1000),
-            //     ),
-            //     child: Obx(() => GestureDetector(
-            //           onTap: themeController.toggleTheme,
-            //           child: Icon(
-            //             themeController.isDarkMode.value
-            //                 ? Icons.dark_mode
-            //                 : Icons.light_mode,
-            //             color: AppVar.seconndTextColor,
-            //           ),
-            //         )),
-            //   ),
-            // ),
             ClipPath(
               clipper: WaveClipper(),
               child: Container(
@@ -226,19 +239,12 @@ class _HomeViewState extends State<HomeView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
-                        // bottom: AppSizeH.s10,
-                        // top: AppSizeH.s10,
-                        left: AppSizeW.s4,
-                        right: AppSizeW.s4),
+                    padding:
+                        EdgeInsets.only(left: AppSizeW.s4, right: AppSizeW.s4),
                     child: Text(
                       "",
-                      // selectedMealsCount > 2
-                      //     ? 'You have selected $selectedMealsCount meals. Please remove one to proceed.'
-                      //     : 'You have selected $selectedMealsCount meals.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        // color: AppVar.primary,
                         fontSize: AppSizeSp.s14,
                         fontWeight: FontWeight.normal,
                         height: AppSizeH.s1,
@@ -265,7 +271,7 @@ class _HomeViewState extends State<HomeView> {
                       );
                     } else {
                       child = Text(
-                        'Confirm Selection',
+                        appStrings.confirmSelection,
                         style: TextStyle(
                           color: AppVar.seconndTextColor,
                           fontSize: AppSizeSp.s16,
@@ -303,6 +309,7 @@ class _HomeViewState extends State<HomeView> {
 
 class MealItem extends StatelessWidget {
   final HomeController homeController = Get.find<HomeController>();
+  final AppStrings appStrings = AppStrings();
 
   final MealModel meal;
   final VoidCallback onTap;
@@ -388,7 +395,6 @@ class MealItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppSizeR.s12),
                       child: meal.imgs.isNotEmpty
                           ? Image.network(
-                              //Note: ZAK DONT FORGET TO CHANGE THIS URL
                               "http://10.0.2.2:8000/${meal.imgs[0]}",
                               errorBuilder: (BuildContext context,
                                   Object exception, StackTrace? stackTrace) {
@@ -432,7 +438,7 @@ class MealItem extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              isSelected ? 'Added' : 'Add',
+                              isSelected ? appStrings.added : appStrings.add,
                               style: TextStyle(
                                 color: isSelected
                                     ? AppVar.seconndTextColor
@@ -465,7 +471,7 @@ class MealItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Details..",
+                          appStrings.details,
                           style: TextStyle(
                               letterSpacing: 1,
                               decoration: TextDecoration.underline,

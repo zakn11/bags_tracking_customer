@@ -7,6 +7,7 @@ import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
 import 'package:tracking_system_app/widgets/toast/custom_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
@@ -17,12 +18,14 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppStrings() = AppStrings();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppVar.primary,
         title: Center(
           child: Text(
-            'Profile',
+            AppStrings().profile,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: AppSizeSp.s18,
@@ -91,7 +94,7 @@ class ProfileView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Account',
+                          AppStrings().account,
                           style: TextStyle(
                             color: const Color(0xFF101914),
                             fontSize: AppSizeSp.s18,
@@ -103,7 +106,7 @@ class ProfileView extends StatelessWidget {
                         SizedBox(height: AppSizeH.s10),
                         BuildInfoItemWidget(
                           icon: Icons.phone,
-                          title: 'Phone',
+                          title: AppStrings().phone,
                           value: profileController.getCustomerInfo.value.phone,
                           editable: true,
                           onConfirm: (newValue) async {
@@ -113,7 +116,7 @@ class ProfileView extends StatelessWidget {
                         ),
                         BuildInfoItemWidget(
                           icon: Icons.email,
-                          title: 'Email',
+                          title: AppStrings().email,
                           value: profileController.getCustomerInfo.value.email,
                           editable: true,
                           onConfirm: (newValue) async {
@@ -123,18 +126,18 @@ class ProfileView extends StatelessWidget {
                         ),
                         BuildInfoItemWidget(
                           icon: Icons.location_on,
-                          title: 'Address',
+                          title: AppStrings().address,
                           value:
                               profileController.getCustomerInfo.value.address,
                         ),
                         BuildInfoItemWidget(
                           icon: Icons.business,
-                          title: 'Area',
+                          title: AppStrings().area,
                           value: profileController.getCustomerInfo.value.area,
                         ),
                         BuildInfoItemWidget(
                           icon: Icons.directions_car,
-                          title: 'Driver',
+                          title: AppStrings().driver,
                           value: profileController
                               .getCustomerInfo.value.driverName,
                         ),
@@ -150,7 +153,7 @@ class ProfileView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Subscription',
+                          AppStrings().subscription,
                           style: TextStyle(
                             fontSize: AppSizeSp.s18,
                             fontWeight: FontWeight.bold,
@@ -160,24 +163,24 @@ class ProfileView extends StatelessWidget {
                         ),
                         BuildInfoItemWidget(
                           icon: Icons.calendar_today,
-                          title: 'Start Date',
+                          title: AppStrings().startDate,
                           value: profileController
                               .getCustomerInfo.value.subscriptionStartDate,
                         ),
                         BuildInfoItemWidget(
                           icon: Icons.calendar_today,
-                          title: 'Expiry Date',
+                          title: AppStrings().expiryDate,
                           value: profileController
                               .getCustomerInfo.value.subscriptionExpiryDate,
                         ),
                         BuildInfoItemWidget(
                           icon: Icons.check_circle,
-                          title: 'Status',
+                          title: AppStrings().status,
                           value: profileController.getCustomerInfo.value
                                       .subscriptionStatus ==
                                   1
-                              ? "Active"
-                              : "Inactive",
+                              ? AppStrings().active
+                              : AppStrings().inactive,
                         ),
                         Padding(
                           padding: EdgeInsets.all(AppSizeW.s16),
@@ -199,13 +202,12 @@ class ProfileView extends StatelessWidget {
                                   await launchUrl(whatsappUri,
                                       mode: LaunchMode.externalApplication);
                                 } else {
-                                  CustomToast.errorToast(
-                                      "Opps..", 'WhatsApp cannot be opened');
-                                  // throw 'WhatsApp cannot be opened';
+                                  CustomToast.errorToast(AppStrings().error,
+                                      AppStrings().whatsappCannotBeOpened);
                                 }
                               },
                               child: Text(
-                                'Contact Us',
+                                AppStrings().contactUs,
                                 style: TextStyle(
                                   color: const Color(0xFF0E1A13),
                                   fontSize: AppSizeSp.s14,
@@ -260,6 +262,7 @@ class BuildInfoItemWidget extends StatelessWidget {
     currentValue.value = value;
     final controller = TextEditingController(text: value);
     final profileController = Get.find<ProfileController>();
+    final AppStrings() = AppStrings();
 
     return Container(
       height: AppSizeH.s72,
@@ -300,7 +303,7 @@ class BuildInfoItemWidget extends StatelessWidget {
                       Expanded(
                         child: TextField(
                           controller: controller,
-                          keyboardType: title == "Phone"
+                          keyboardType: title == AppStrings().phone
                               ? TextInputType.number
                               : TextInputType.text,
                           decoration: const InputDecoration(
@@ -310,9 +313,9 @@ class BuildInfoItemWidget extends StatelessWidget {
                         ),
                       ),
                       Obx(() {
-                        final isLoading = title == "Phone"
+                        final isLoading = title == AppStrings().phone
                             ? profileController.isPhoneUpdating.value
-                            : title == "Email"
+                            : title == AppStrings().email
                                 ? profileController.isEmailUpdating.value
                                 : false;
 
@@ -339,12 +342,11 @@ class BuildInfoItemWidget extends StatelessWidget {
                               onPressed: () async {
                                 if (onConfirm != null) {
                                   try {
-                                    await onConfirm!(
-                                        controller.text);
+                                    await onConfirm!(controller.text);
                                     currentValue.value = controller.text;
                                   } catch (e) {
-                                    CustomToast.errorToast(
-                                        "Error", "Update failed");
+                                    CustomToast.errorToast(AppStrings().error,
+                                        AppStrings().updateFailed);
                                   }
                                 }
                               },

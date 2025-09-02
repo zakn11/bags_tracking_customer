@@ -4,6 +4,7 @@ import 'package:tracking_system_app/model/get_all_meals_model.dart';
 import 'package:tracking_system_app/modules/home/controller/home_controller.dart';
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class MealDetailsView extends StatelessWidget {
   final MealModel meal;
@@ -13,11 +14,11 @@ class MealDetailsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find<HomeController>();
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final AppStrings() = AppStrings();
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // App bar with image
           SliverAppBar(
             expandedHeight: 250,
             pinned: true,
@@ -75,18 +76,14 @@ class MealDetailsView extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
           ),
-
-          // Content
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(AppSizeW.s20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Meal status and type chips
                   Row(
                     children: [
-                      // Status chip
                       Container(
                         padding: EdgeInsets.symmetric(
                             horizontal: AppSizeW.s12, vertical: AppSizeH.s6),
@@ -110,7 +107,9 @@ class MealDetailsView extends StatelessWidget {
                             ),
                             SizedBox(width: AppSizeW.s6),
                             Text(
-                              meal.isActive == 1 ? "Available" : "Unavailable",
+                              meal.isActive == 1
+                                  ? AppStrings().available
+                                  : AppStrings().unavailable,
                               style: TextStyle(
                                 fontSize: AppSizeSp.s12,
                                 fontWeight: FontWeight.w600,
@@ -123,8 +122,6 @@ class MealDetailsView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: AppSizeW.s10),
-
-                      // Meal type chip
                       Container(
                         padding: EdgeInsets.symmetric(
                             horizontal: AppSizeW.s12, vertical: AppSizeH.s6),
@@ -154,13 +151,10 @@ class MealDetailsView extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   SizedBox(height: AppSizeH.s20),
-
-                  // Description section
                   _buildSection(
                     context,
-                    title: "Description",
+                    title: AppStrings().description,
                     icon: Icons.description,
                     child: Text(
                       meal.description,
@@ -171,13 +165,10 @@ class MealDetailsView extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   SizedBox(height: AppSizeH.s24),
-
-                  // Ingredients section
                   _buildSection(
                     context,
-                    title: "Ingredients",
+                    title: AppStrings().ingredients,
                     icon: Icons.restaurant_menu,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,7 +178,7 @@ class MealDetailsView extends StatelessWidget {
                               _buildIngredientItem(ingredient.trim()))
                         else
                           Text(
-                            "No ingredients listed",
+                            AppStrings().noIngredientsListed,
                             style: TextStyle(
                               fontSize: AppSizeSp.s14,
                               color: Colors.grey[500],
@@ -197,26 +188,23 @@ class MealDetailsView extends StatelessWidget {
                       ],
                     ),
                   ),
-
                   SizedBox(height: AppSizeH.s24),
-
-                  // Nutritional info (if available)
                   _buildSection(
                     context,
-                    title: "Nutritional Information",
+                    title: AppStrings().nutritionalInformation,
                     icon: Icons.monitor_heart,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        _buildNutritionItem(AppStrings().calories, "350",
+                            Icons.local_fire_department),
                         _buildNutritionItem(
-                            "Calories", "350", Icons.local_fire_department),
+                            AppStrings().protein, "25g", Icons.fitness_center),
                         _buildNutritionItem(
-                            "Protein", "25g", Icons.fitness_center),
-                        _buildNutritionItem("Carbs", "45g", Icons.grain),
+                            AppStrings().carbs, "45g", Icons.grain),
                       ],
                     ),
                   ),
-
                   SizedBox(height: AppSizeH.s40),
                 ],
               ),
@@ -228,8 +216,8 @@ class MealDetailsView extends StatelessWidget {
         final isSelected = homeController.selectedMealIds.contains(meal.id);
 
         return SizedBox(
-          height: AppSizeH.s40, // control height
-          width: AppSizeW.s180, // control width
+          height: AppSizeH.s40,
+          width: AppSizeW.s180,
           child: ElevatedButton.icon(
             onPressed: () {
               homeController.toggleMealSelection(meal.id);
@@ -247,12 +235,12 @@ class MealDetailsView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  isSelected ? 'Added' : "Add to Selection",
+                  isSelected ? AppStrings().added : AppStrings().addToSelection,
                   style: TextStyle(
                     color: isSelected
                         ? AppVar.seconndTextColor
                         : Theme.of(context).disabledColor,
-                    fontSize: AppSizeSp.s14,
+                    fontSize: AppSizeSp.s12,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -282,7 +270,7 @@ class MealDetailsView extends StatelessWidget {
             Icon(
               icon,
               color: AppVar.primary,
-              size: AppSizeSp.s20,
+              size: AppSizeW.s20,
             ),
             SizedBox(width: AppSizeW.s10),
             Text(
@@ -353,7 +341,7 @@ class MealDetailsView extends StatelessWidget {
           child: Icon(
             icon,
             color: AppVar.primary,
-            size: AppSizeSp.s20,
+            size: AppSizeW.s20,
           ),
         ),
         SizedBox(height: AppSizeH.s8),

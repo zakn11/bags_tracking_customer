@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import 'package:tracking_system_app/modules/home/controller/home_controller.dart
 import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/general/main_loading_widget.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class CustomMessageDialog extends StatelessWidget {
   final String title;
@@ -18,12 +20,13 @@ class CustomMessageDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     Color backgroundColor = isDark ? Colors.grey[900]! : Colors.white;
+    final AppStrings() = AppStrings();
 
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppSizeR.s20),
       ),
-      backgroundColor: backgroundColor, // <- dynamic background
+      backgroundColor: backgroundColor,
       child: Padding(
         padding: EdgeInsets.all(AppSizeW.s20),
         child: Stack(
@@ -46,11 +49,13 @@ class CustomMessageDialog extends StatelessWidget {
                 SizedBox(height: AppSizeH.s5),
                 Row(
                   children: [
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: isDark ? Colors.white70 : Colors.grey,
-                        fontSize: AppSizeSp.s14,
+                    Flexible(
+                      child: Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.grey,
+                          fontSize: AppSizeSp.s14,
+                        ),
                       ),
                     ),
                   ],
@@ -67,7 +72,7 @@ class CustomMessageDialog extends StatelessWidget {
                   controller: homeController.issueDialogController,
                   maxLines: 9,
                   decoration: InputDecoration(
-                    hintText: 'Enter Your Problem',
+                    hintText: AppStrings().enterYourProblem,
                     hintStyle: TextStyle(
                       color: const Color(0xffBFBFBF),
                       fontSize: AppSizeSp.s12,
@@ -147,12 +152,12 @@ class CustomMessageDialog extends StatelessWidget {
                                     BorderRadius.circular(AppSizeR.s10),
                               ),
                               child: Text(
-                                "Send to admin",
+                                AppStrings().sendToAdmin,
                                 style: TextStyle(
                                   color: homeController.isTextFildFilled.value
                                       ? AppVar.seconndTextColor
                                       : AppVar.primary,
-                                  fontSize: AppSizeSp.s14,
+                                  fontSize: AppSizeSp.s10,
                                 ),
                               ),
                             ),
@@ -169,9 +174,9 @@ class CustomMessageDialog extends StatelessWidget {
               top: AppSizeH.s75,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: AppSizeW.s5),
-                color: backgroundColor, // match the dialog background
+                color: backgroundColor,
                 child: Text(
-                  "Your Problem",
+                  AppStrings().yourProblem,
                   style: TextStyle(
                     fontSize: AppSizeSp.s12,
                     fontWeight: FontWeight.bold,
@@ -181,7 +186,8 @@ class CustomMessageDialog extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: 0,
+              right: context.locale.languageCode != 'ar' ? 0 : null,
+              left: context.locale.languageCode == 'ar' ? 0 : null,
               top: 0,
               child: GestureDetector(
                 onTap: homeController.exitMessageDialog,

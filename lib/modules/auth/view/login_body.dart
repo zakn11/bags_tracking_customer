@@ -9,6 +9,7 @@ import 'package:tracking_system_app/style/app_var.dart';
 import 'package:tracking_system_app/style/values_manager.dart';
 import 'package:tracking_system_app/widgets/auth/costume_login_TextField_widget.dart';
 import 'package:tracking_system_app/widgets/auth/login-defult_button.dart';
+import 'package:tracking_system_app/shared/app_strings.dart';
 
 class LoginBody extends StatelessWidget {
   const LoginBody({
@@ -26,9 +27,7 @@ class LoginBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: AppSizeW.s16,
-          //IF TAPLATE
-          vertical: screenWidth > 850 ? 40 : 0),
+          horizontal: AppSizeW.s16, vertical: screenWidth > 850 ? 40 : 0),
       child: GetBuilder<LoginController>(
         init: LoginController(),
         builder: (controller) {
@@ -78,6 +77,8 @@ class LoginBodyBody extends StatelessWidget {
             : screenWidth > 600
                 ? 0.02
                 : 0.04);
+    final AppStrings() = AppStrings();
+
     return Column(
       mainAxisAlignment:
           isLandscape ? MainAxisAlignment.start : MainAxisAlignment.center,
@@ -112,7 +113,7 @@ class LoginBodyBody extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: 30.0, top: 30),
           child: Text(
-            "Sign In",
+            AppStrings().signIn,
             style: TextStyle(
               color: AppVar.seconndTextColor,
               fontSize: AppSizeSp.s40,
@@ -126,7 +127,6 @@ class LoginBodyBody extends StatelessWidget {
             ),
           ),
         ),
-
         Theme(
           data: Theme.of(context).copyWith(
             primaryColor: AppVar.primary,
@@ -135,12 +135,11 @@ class LoginBodyBody extends StatelessWidget {
                 ),
           ),
           child: IntlPhoneField(
-            // controller: controller.phoneNumberController,
             decoration: InputDecoration(
               isDense: true,
               fillColor: Colors.transparent,
               filled: true,
-              hintText: 'Phone Number',
+              hintText: AppStrings().phoneNumber,
               hintStyle: TextStyle(
                   color: const Color.fromARGB(197, 255, 255, 255),
                   fontSize: textFieldFontSize * 0.9),
@@ -173,8 +172,6 @@ class LoginBodyBody extends StatelessWidget {
               print(phone.completeNumber);
             },
             onSubmitted: (phone) {
-              // هون بيتخزن الرقم كامل مع رمز الدولة مرة وحدة بس لما يضغط Enter أو Done
-              // controller.phoneNumberController.text = phone.completeNumber;
               print("final: ${controller.phoneNumberController.text}");
             },
           ),
@@ -183,7 +180,7 @@ class LoginBodyBody extends StatelessWidget {
           prefixIcon: null,
           inputType: TextInputType.text,
           hintText: '••••••••••••••••',
-          title: 'Password',
+          title: AppStrings().password,
           controller: controller.passwordController,
           validator: null,
         ),
@@ -196,7 +193,7 @@ class LoginBodyBody extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                "Forgot password?",
+                AppStrings().forgotPassword,
                 style: TextStyle(
                     fontSize: AppSizeSp.s13, color: AppVar.seconndTextColor),
               ),
@@ -217,8 +214,8 @@ class LoginBodyBody extends StatelessWidget {
                   ? Colors.black.withValues(alpha: .2)
                   : AppVar.seconndTextColor,
               title: controller.isButtonLooked.value
-                  ? "Try again in ${controller.lockoutTimer.value}s"
-                  : "SIGN IN",
+                  ? "${AppStrings().tryAgainIn} ${controller.lockoutTimer.value}s"
+                  : AppStrings().signInButton,
               onPressed: controller.isButtonLooked.value ||
                       controller.isButtonLookedPermently.value
                   ? () {}
@@ -230,7 +227,6 @@ class LoginBodyBody extends StatelessWidget {
             ),
           );
         }),
-        //------------ zak ----------------------
         Obx(() {
           if (controller.isBiometricAvailable.value) {
             return Column(
@@ -255,7 +251,7 @@ class LoginBodyBody extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: AppSizeW.s5),
                         child: Text(
-                          'OR',
+                          AppStrings().or,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: AppSizeSp.s9,
@@ -278,7 +274,6 @@ class LoginBodyBody extends StatelessWidget {
                     ],
                   ),
                 ),
-                // SizedBox(height: AppSizeH.s20),
                 Obx(() {
                   return Opacity(
                     opacity: controller.fingerprintOpacity.value,
@@ -304,12 +299,11 @@ class LoginBodyBody extends StatelessWidget {
                     ),
                   );
                 }),
-                // SizedBox(height: AppSizeH.s10),
                 Center(
                   child: Opacity(
                     opacity: controller.fingerprintOpacity.value,
                     child: Text(
-                      'Use Fingerprint',
+                      AppStrings().useFingerprint,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: AppSizeSp.s12,
@@ -322,7 +316,7 @@ class LoginBodyBody extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: AppSizeW.s40),
                     child: Text(
-                      'Available after first manual login',
+                      AppStrings().availableAfterFirstLogin,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.grey,
